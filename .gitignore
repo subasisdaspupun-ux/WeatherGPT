@@ -1,0 +1,29 @@
+# Environment & Secret files
+.env
+*.env
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# Build outputs
+frontend/dist/
+frontend/build/
+*.egg-info/
+
+# Databases & Models
+*.db
+*.sqlite3
+
+# Scratch / Temp folder
+scratch/
+
+# IDE settings
+.vscode/
+.idea/
+*.swp

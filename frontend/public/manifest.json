@@ -1,0 +1,16 @@
+{
+  "short_name": "WeatherGPT",
+  "name": "WeatherGPT — AI Weather & Disaster-Risk Assistant",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/color/512/cloud-lighting.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#0A0F1D",
+  "theme_color": "#0A0F1D",
+  "display": "standalone",
+  "orientation": "portrait"
+}
