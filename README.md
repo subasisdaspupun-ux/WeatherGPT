@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # WeatherGPT 🌦️🤖
 
 **WeatherGPT** is an AI-powered, multilingual weather and disaster-risk assistant. It delivers location-aware, accurate weather insights grounded strictly in real weather data fetched from **Open-Meteo** and **India Meteorological Department (IMD)** feeds — accompanied by severe weather safety advisories and decision-support risk indicators without hallucination.
@@ -137,3 +138,6 @@ Frontend Web Dashboard will be live at `http://localhost:5173`.
 ## 🛡️ License & Disclaimers
 
 Automated risk levels (**LOW**, **MODERATE**, **HIGH**, **EXTREME**) are decision-support indicators calculated from meteorological observations and district warning bulletins. Official warnings are directly sourced from the India Meteorological Department (IMD).
+=======
+# WeatherGPT
+>>>>>>> 636113de7acdfec97cc3bc48bd45b42bd08fcb2c
