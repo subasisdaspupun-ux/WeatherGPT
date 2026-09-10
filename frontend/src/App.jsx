@@ -11,17 +11,34 @@ import LoginPage from './components/LoginPage';
 import SettingsPage from './components/SettingsPage';
 import HistoricalAnalysis from './components/HistoricalAnalysis';
 import VoiceAssistantModal from './components/VoiceAssistantModal';
-import { fetchWeather } from './services/api';
+import { fetchWeather, detectLiveLocation } from './services/api';
 import { Loader2, AlertCircle, Mic } from 'lucide-react';
 import { speakWeatherReport, stopSpeech, generateWeatherSpeechText } from './utils/speech';
 import { SettingsProvider } from './context/SettingsContext';
 
 export default function App() {
-  const [currentCity, setCurrentCity] = useState('Bhubaneswar');
+  const [currentCity, setCurrentCity] = useState(() => {
+    try {
+      const saved = localStorage.getItem('weathergpt_current_city');
+      if (saved && !saved.toLowerCase().includes('mumbai') && !saved.toLowerCase().includes('detecting')) {
+        return saved;
+      }
+    } catch {
+      return 'Bhubaneswar';
+    }
+    return 'Bhubaneswar';
+  });
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentLang, setCurrentLang] = useState('en');
+  const [currentLang, setCurrentLang] = useState(() => {
+    try {
+      const saved = localStorage.getItem('weathergpt_lang');
+      if (saved && ['en', 'hi', 'or', 'bn', 'te', 'ta'].includes(saved)) {
+        return saved;
+      }
+    } catch {}
+    return 'or'; // Default to Odia
+  });
   const [chatOpen, setChatOpen] = useState(false);
   const [voiceModalOpen, setVoiceModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' | 'login' | 'settings' | 'historical'
@@ -52,15 +69,29 @@ export default function App() {
     setIsSpeaking(false);
   };
 
-  const loadCityWeather = async (city, triggerVoice = autoSpeakRef.current) => {
+  const handleLangChange = (lang) => {
+    setCurrentLang(lang);
+    try {
+      localStorage.setItem('weathergpt_lang', lang);
+    } catch (e) {}
+    if (isSpeaking && weatherData) {
+      handleStopSpeech();
+      speakCurrentWeather(weatherData, lang);
+    }
+  };
+
+  const loadCityWeather = async (city, triggerVoice = autoSpeakRef.current, country = null) => {
     setLoading(true);
     setError(null);
     handleStopSpeech();
     try {
-      const data = await fetchWeather(city);
+      const data = await fetchWeather(city, country);
       setWeatherData(data);
       if (data.location && data.location.name) {
         setCurrentCity(data.location.name);
+        try {
+          localStorage.setItem('weathergpt_current_city', data.location.name);
+        } catch (e) {}
       }
       // Speak the weather of the searched location if voice narration is active
       if (triggerVoice) {
@@ -77,8 +108,49 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Initial load without auto-speaking immediately on fresh page visit to comply with browser autoplay policies
-    loadCityWeather('Bhubaneswar', false);
+    let isMounted = true;
+
+    const initLiveLocation = async () => {
+      // Clear any outdated 'Mumbai' or 'Detecting...' stored from earlier ISP fallback
+      try {
+        const saved = localStorage.getItem('weathergpt_current_city');
+        if (saved && (saved.toLowerCase().includes('mumbai') || saved.toLowerCase().includes('detecting'))) {
+          localStorage.removeItem('weathergpt_current_city');
+        }
+      } catch (e) {}
+
+      // If user previously granted GPS permission, load true GPS coordinates
+      try {
+        if (typeof navigator !== 'undefined' && navigator.permissions?.query) {
+          const perm = await navigator.permissions.query({ name: 'geolocation' });
+          if (perm.state === 'granted') {
+            const liveTarget = await detectLiveLocation({ requireGps: true });
+            if (isMounted && liveTarget) {
+              await loadCityWeather(liveTarget, false);
+              return;
+            }
+          }
+        }
+      } catch (e) {}
+
+      // Otherwise load valid saved city or default to Bhubaneswar
+      try {
+        const saved = localStorage.getItem('weathergpt_current_city');
+        const target = (saved && !saved.toLowerCase().includes('mumbai') && !saved.toLowerCase().includes('detecting'))
+          ? saved
+          : 'Bhubaneswar';
+        if (isMounted) {
+          await loadCityWeather(target, false);
+        }
+      } catch (err) {
+        if (isMounted) {
+          await loadCityWeather('Bhubaneswar', false);
+        }
+      }
+    };
+
+    initLiveLocation();
+    return () => { isMounted = false; };
   }, []);
 
   const handleLoginSuccess = (userData) => {
@@ -98,18 +170,13 @@ export default function App() {
         {/* Navigation Header */}
         <Navbar
           currentCity={currentCity}
-          onSearch={(city) => {
-            loadCityWeather(city, true);
+          detectedCountryCode={weatherData?.location?.country_code}
+          onSearch={(city, country) => {
+            loadCityWeather(city, true, country);
             setCurrentView('dashboard');
           }}
           currentLang={currentLang}
-          onLangChange={(lang) => {
-            setCurrentLang(lang);
-            if (isSpeaking && weatherData) {
-              handleStopSpeech();
-              speakCurrentWeather(weatherData, lang);
-            }
-          }}
+          onLangChange={handleLangChange}
           toggleChat={() => setChatOpen(!chatOpen)}
           riskLevel={riskLevel}
           user={user}
@@ -251,7 +318,7 @@ export default function App() {
           onClose={() => setVoiceModalOpen(false)}
           currentCity={currentCity}
           currentLang={currentLang}
-          onLangChange={(lang) => setCurrentLang(lang)}
+          onLangChange={handleLangChange}
           currentWeather={weatherData}
         />
 
@@ -261,6 +328,7 @@ export default function App() {
           onClose={() => setChatOpen(false)}
           currentCity={currentCity}
           currentLang={currentLang}
+          currentWeather={weatherData}
         />
 
         {/* Footer */}

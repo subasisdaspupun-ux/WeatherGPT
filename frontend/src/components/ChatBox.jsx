@@ -4,29 +4,60 @@ import { sendChatMessage } from '../services/api';
 import { translations } from '../i18n/translations';
 import { speakText, stopSpeech, startVoiceRecognition } from '../utils/speech';
 
-const QUICK_PROMPTS = [
-  "Will it rain in Bhubaneswar tomorrow?",
-  "Is there any cyclone or flood alert for Khordha?",
-  "What is the temperature and humidity right now?",
-  "ଭୁବନେଶ୍ୱରରେ ଆଜି ବର୍ଷା ହେବ କି?",
-  "क्या कल बारिश होने की संभावना है?"
-];
+const getCityQuickPrompts = (city, lang) => {
+  const c = city || 'your location';
+  if (lang === 'hi') {
+    return [
+      `क्या ${c} में आज या कल बारिश होगी?`,
+      `क्या ${c} के लिए कोई चक्रवात या बाढ़ का अलर्ट है?`,
+      `${c} का वर्तमान तापमान और आर्द्रता क्या है?`,
+      `सुरक्षा सलाह क्या है?`
+    ];
+  }
+  if (lang === 'or') {
+    return [
+      `${c}ରେ ଆଜି କିମ୍ବା କାଲି ବର୍ଷା ହେବ କି?`,
+      `${c} ପାଇଁ କୌଣସି ବାତ୍ୟା କିମ୍ବା ବନ୍ୟା ସତର୍କତା ଅଛି କି?`,
+      `${c}ର ବର୍ତ୍ତମାନର ତାପମାତ୍ରା ଓ ଆର୍ଦ୍ରତା କେତେ?`,
+      `ସୁରକ୍ଷା ପରାମର୍ଶ କ'ଣ?`
+    ];
+  }
+  return [
+    `Will it rain in ${c} today or tomorrow?`,
+    `Are there any cyclone, flood, or storm alerts for ${c}?`,
+    `What is the current temperature and humidity in ${c}?`,
+    `What are the outdoor safety guidelines for ${c}?`
+  ];
+};
 
-export default function ChatBox({ isOpen, onClose, currentCity, currentLang }) {
+export default function ChatBox({ isOpen, onClose, currentCity, currentLang, currentWeather }) {
   const t = translations[currentLang] || translations.en;
-  const [messages, setMessages] = useState([
-    {
-      sender: 'ai',
-      text: `Hello! I am **WeatherGPT** AI Assistant. Ask me anything about weather, rainfall predictions, or safety guidelines for **${currentCity}**. All answers are grounded strictly in real weather data.`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  
+  const createGreeting = (city) => ({
+    sender: 'ai',
+    text: `Hello! I am **WeatherGPT** AI Assistant. Ask me anything about weather, rainfall predictions, or safety guidelines for **${city || 'your location'}**. All answers are grounded strictly in real weather data.`,
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+
+  const [messages, setMessages] = useState([createGreeting(currentCity)]);
+  const lastCityRef = useRef(currentCity);
+
+  // When user switches city in the dashboard, update greeting if chat is fresh or newly opened
+  useEffect(() => {
+    if (lastCityRef.current !== currentCity) {
+      lastCityRef.current = currentCity;
+      setMessages([createGreeting(currentCity)]);
     }
-  ]);
+  }, [currentCity]);
+
   const [inputMsg, setInputMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(false);
   const [currentlySpeakingId, setCurrentlySpeakingId] = useState(null);
   const chatEndRef = useRef(null);
+
+  const quickPrompts = getCityQuickPrompts(currentCity, currentLang);
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -75,7 +106,7 @@ export default function ChatBox({ isOpen, onClose, currentCity, currentLang }) {
     setLoading(true);
 
     try {
-      const res = await sendChatMessage(msg, currentCity, currentLang);
+      const res = await sendChatMessage(msg, currentCity, currentLang, currentWeather);
       const aiEntry = {
         sender: 'ai',
         text: res.reply,
@@ -249,7 +280,7 @@ export default function ChatBox({ isOpen, onClose, currentCity, currentLang }) {
       {/* Quick Prompts */}
       <div className="px-4 py-2 border-t border-slate-800/60 bg-slate-900/40 flex items-center gap-2 overflow-x-auto no-scrollbar">
         <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-        {QUICK_PROMPTS.map((qp, i) => (
+        {quickPrompts.map((qp, i) => (
           <button
             key={i}
             onClick={() => handleSend(qp)}

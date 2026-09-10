@@ -61,20 +61,24 @@ export default function VoiceAssistantModal({
     };
   }, [recognitionInstance]);
 
-  // When modal opens, introduce voice assistant if idle
+  // When modal opens or language changes while idle, introduce voice assistant in selected language
   useEffect(() => {
-    if (isOpen && state === 'idle' && !aiReply) {
+    if (isOpen && state === 'idle') {
       const welcomeMsg = currentLang === 'hi'
         ? `${currentCity} के लिए वॉयस सहायक तैयार है। माइक पर टैप करें और बोलें।`
         : currentLang === 'or'
         ? `${currentCity} ପାଇଁ ଭଏସ୍ ସହାୟକ ପ୍ରସ୍ତୁତ। ମାଇକ୍ ଛୁଇଁ କୁହନ୍ତୁ।`
         : currentLang === 'bn'
         ? `${currentCity}-এর ভয়েস সহায়ক প্রস্তুত। কথা বলতে মাইকে চাপ দিন।`
+        : currentLang === 'te'
+        ? `${currentCity} వాయిస్ అసిస్టెంట్ సిద్ధంగా ఉంది. మాట్లాడటానికి మైక్రోఫోన్ నొక్కండి.`
+        : currentLang === 'ta'
+        ? `${currentCity} குரல் உதவியாளர் தயார். பேச மைக்ரோஃபோனைத் தட்டவும்.`
         : `Voice Assistant ready for ${currentCity}. Tap the microphone and speak your question.`;
       
       setAiReply(welcomeMsg);
     }
-  }, [isOpen, currentCity, currentLang]);
+  }, [isOpen, currentCity, currentLang, state]);
 
   const handleStartListening = () => {
     stopSpeech();
@@ -117,7 +121,7 @@ export default function VoiceAssistantModal({
   const processVoiceQuery = async (queryText) => {
     setState('thinking');
     try {
-      const res = await sendChatMessage(queryText, currentCity, currentLang);
+      const res = await sendChatMessage(queryText, currentCity, currentLang, currentWeather);
       const reply = res.reply || "I received your question and processed real weather data.";
       setAiReply(reply);
       setLastSpokenText(reply);

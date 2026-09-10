@@ -2,7 +2,7 @@ export const translations = {
   en: {
     appTitle: "WeatherGPT",
     tagline: "AI Weather & Disaster-Risk Assistant",
-    searchPlaceholder: "Search city or district...",
+    searchPlaceholder: "Search any location...",
     searchBtn: "Search",
     autoLocate: "Locate Me",
     currentWeather: "Current Weather",
@@ -61,7 +61,7 @@ export const translations = {
   hi: {
     appTitle: "WeatherGPT",
     tagline: "एआई मौसम और आपदा जोखिम सहायक",
-    searchPlaceholder: "शहर या जिला खोजें...",
+    searchPlaceholder: "कोई भी स्थान खोजें...",
     searchBtn: "खोजें",
     autoLocate: "मेरा स्थान",
     currentWeather: "वर्तमान मौसम",
@@ -120,7 +120,7 @@ export const translations = {
   or: {
     appTitle: "WeatherGPT",
     tagline: "AI ପାଣିପାଗ ଏବଂ ବିପତ୍ତି ସହାୟକ",
-    searchPlaceholder: "ସହର କିମ୍ବା ଜିଲ୍ଲା ଖୋଜନ୍ତୁ...",
+    searchPlaceholder: "ଯେକୌଣସି ସ୍ଥାନ ଖୋଜନ୍ତୁ...",
     searchBtn: "ଖୋଜନ୍ତୁ",
     autoLocate: "ମୋର ସ୍ଥାନ",
     currentWeather: "ବର୍ତ୍ତମାନର ପାଣିପାଗ",
@@ -179,7 +179,7 @@ export const translations = {
   bn: {
     appTitle: "WeatherGPT",
     tagline: "এআই আবহাওয়া ও দুর্যোগ সহায়ক",
-    searchPlaceholder: "শহর বা জেলা খুঁজুন...",
+    searchPlaceholder: "যেকোন স্থান খুঁজুন...",
     searchBtn: "খুঁজুন",
     autoLocate: "আমার অবস্থান",
     currentWeather: "বর্তমান আবহাওয়া",
@@ -238,7 +238,7 @@ export const translations = {
   te: {
     appTitle: "WeatherGPT",
     tagline: "AI వాతావరణ మరియు విపత్తు సహాయకుడు",
-    searchPlaceholder: "నగరం లేదా జిల్లా శోధించండి...",
+    searchPlaceholder: "ఏదైనా స్థానాన్ని శోధించండి...",
     searchBtn: "శోధించండి",
     autoLocate: "నా స్థానం",
     currentWeather: "ప్రస్తుత వాతావరణం",
@@ -297,7 +297,7 @@ export const translations = {
   ta: {
     appTitle: "WeatherGPT",
     tagline: "AI வானிலை மற்றும் பேரிடர் உதவி",
-    searchPlaceholder: "நகரம் அல்லது மாவட்டத்தைத் தேடுங்கள்...",
+    searchPlaceholder: "எந்த இடத்தையும் தேடுங்கள்...",
     searchBtn: "தேடு",
     autoLocate: "என் இருப்பிடம்",
     currentWeather: "தற்போதைய வானிலை",

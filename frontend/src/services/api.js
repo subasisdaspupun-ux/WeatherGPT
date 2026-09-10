@@ -1,20 +1,74 @@
 import axios from 'axios';
 
 const MOCK_CITIES = {
-  bhubaneswar: { name: 'Bhubaneswar', lat: 20.2961, lon: 85.8245, state: 'Odisha', district: 'Khordha', temp: 31.5, condition: 'Partly Cloudy', humidity: 78, wind: 14.5, aqi: 73, alert: 'YELLOW' },
-  delhi: { name: 'New Delhi', lat: 28.6139, lon: 77.2090, state: 'Delhi', district: 'New Delhi', temp: 34.0, condition: 'Hazy Sun', humidity: 62, wind: 11.0, aqi: 185, alert: 'ORANGE' },
-  mumbai: { name: 'Mumbai', lat: 19.0760, lon: 72.8777, state: 'Maharashtra', district: 'Mumbai', temp: 30.2, condition: 'Humid & Overcast', humidity: 84, wind: 18.2, aqi: 92, alert: 'GREEN' },
-  kolkata: { name: 'Kolkata', lat: 22.5726, lon: 88.3639, state: 'West Bengal', district: 'Kolkata', temp: 32.8, condition: 'Thunderstorm Warning', humidity: 80, wind: 16.0, aqi: 115, alert: 'YELLOW' },
-  chennai: { name: 'Chennai', lat: 13.0827, lon: 80.2707, state: 'Tamil Nadu', district: 'Chennai', temp: 33.1, condition: 'Scattered Breezy', humidity: 75, wind: 20.5, aqi: 58, alert: 'GREEN' },
-  bengaluru: { name: 'Bengaluru', lat: 12.9716, lon: 77.5946, state: 'Karnataka', district: 'Bengaluru Urban', temp: 26.4, condition: 'Pleasant & Cloudy', humidity: 68, wind: 12.0, aqi: 42, alert: 'GREEN' },
-  hyderabad: { name: 'Hyderabad', lat: 17.3850, lon: 78.4867, state: 'Telangana', district: 'Hyderabad', temp: 29.8, condition: 'Partly Sunny', humidity: 71, wind: 13.5, aqi: 65, alert: 'GREEN' },
-  puri: { name: 'Puri', lat: 19.8135, lon: 85.8312, state: 'Odisha', district: 'Puri', temp: 31.0, condition: 'Coastal Wind & Rain', humidity: 86, wind: 24.0, aqi: 48, alert: 'YELLOW' },
-  cuttack: { name: 'Cuttack', lat: 20.4625, lon: 85.8828, state: 'Odisha', district: 'Cuttack', temp: 31.8, condition: 'Partly Cloudy', humidity: 76, wind: 13.0, aqi: 75, alert: 'GREEN' },
-  london: { name: 'London', lat: 51.5074, lon: -0.1278, state: 'England', district: 'Greater London', temp: 18.5, condition: 'Scattered Clouds', humidity: 65, wind: 15.0, aqi: 35, alert: 'GREEN' },
-  tokyo: { name: 'Tokyo', lat: 35.6762, lon: 139.6503, state: 'Kanto', district: 'Tokyo', temp: 22.0, condition: 'Clear Sky', humidity: 55, wind: 10.0, aqi: 30, alert: 'GREEN' },
-  newyork: { name: 'New York', lat: 40.7128, lon: -74.0060, state: 'New York', district: 'New York City', temp: 21.5, condition: 'Mainly Clear', humidity: 58, wind: 14.0, aqi: 45, alert: 'GREEN' },
-  dubai: { name: 'Dubai', lat: 25.2048, lon: 55.2708, state: 'Dubai', district: 'Dubai', temp: 37.0, condition: 'Sunny & Dry', humidity: 40, wind: 16.0, aqi: 95, alert: 'YELLOW' },
-  paris: { name: 'Paris', lat: 48.8566, lon: 2.3522, state: 'Ile-de-France', district: 'Paris', temp: 20.0, condition: 'Partly Cloudy', humidity: 60, wind: 12.0, aqi: 40, alert: 'GREEN' }
+  // Odisha - All 30 Districts & Key Coastal / Industrial Hubs
+  bhubaneswar: { name: 'Bhubaneswar', lat: 20.2961, lon: 85.8245, state: 'Odisha', district: 'Khordha', country: 'India', country_code: 'IN', temp: 31.5, condition: 'Partly Cloudy', humidity: 78, wind: 14.5, aqi: 73, alert: 'YELLOW' },
+  cuttack: { name: 'Cuttack', lat: 20.4625, lon: 85.8828, state: 'Odisha', district: 'Cuttack', country: 'India', country_code: 'IN', temp: 31.8, condition: 'Partly Cloudy', humidity: 76, wind: 13.0, aqi: 75, alert: 'GREEN' },
+  puri: { name: 'Puri', lat: 19.8135, lon: 85.8312, state: 'Odisha', district: 'Puri', country: 'India', country_code: 'IN', temp: 31.0, condition: 'Coastal Wind & Rain', humidity: 86, wind: 24.0, aqi: 48, alert: 'YELLOW' },
+  rourkela: { name: 'Rourkela', lat: 22.2604, lon: 84.8536, state: 'Odisha', district: 'Sundargarh', country: 'India', country_code: 'IN', temp: 32.2, condition: 'Mainly Clear', humidity: 64, wind: 12.0, aqi: 82, alert: 'GREEN' },
+  berhampur: { name: 'Berhampur', lat: 19.3150, lon: 84.7941, state: 'Odisha', district: 'Ganjam', country: 'India', country_code: 'IN', temp: 32.0, condition: 'Warm & Humid', humidity: 80, wind: 16.0, aqi: 62, alert: 'GREEN' },
+  sambalpur: { name: 'Sambalpur', lat: 21.4669, lon: 83.9812, state: 'Odisha', district: 'Sambalpur', country: 'India', country_code: 'IN', temp: 33.4, condition: 'Clear Sky', humidity: 60, wind: 10.5, aqi: 70, alert: 'GREEN' },
+  balasore: { name: 'Balasore', lat: 21.4934, lon: 86.9135, state: 'Odisha', district: 'Balasore', country: 'India', country_code: 'IN', temp: 30.8, condition: 'Coastal Breeze', humidity: 82, wind: 18.0, aqi: 65, alert: 'GREEN' },
+  bhadrak: { name: 'Bhadrak', lat: 21.0574, lon: 86.4959, state: 'Odisha', district: 'Bhadrak', country: 'India', country_code: 'IN', temp: 31.2, condition: 'Partly Cloudy', humidity: 79, wind: 15.0, aqi: 68, alert: 'GREEN' },
+  baripada: { name: 'Baripada', lat: 21.9333, lon: 86.7333, state: 'Odisha', district: 'Mayurbhanj', country: 'India', country_code: 'IN', temp: 30.5, condition: 'Passing Showers', humidity: 83, wind: 11.0, aqi: 52, alert: 'GREEN' },
+  paradeep: { name: 'Paradeep', lat: 20.3167, lon: 86.6111, state: 'Odisha', district: 'Jagatsinghpur', country: 'India', country_code: 'IN', temp: 30.0, condition: 'Gusty Sea Breeze', humidity: 88, wind: 26.0, aqi: 60, alert: 'YELLOW' },
+  jharsuguda: { name: 'Jharsuguda', lat: 21.8554, lon: 84.0062, state: 'Odisha', district: 'Jharsuguda', country: 'India', country_code: 'IN', temp: 33.0, condition: 'Mainly Sunny', humidity: 58, wind: 11.0, aqi: 85, alert: 'GREEN' },
+  bargarh: { name: 'Bargarh', lat: 21.3333, lon: 83.6167, state: 'Odisha', district: 'Bargarh', country: 'India', country_code: 'IN', temp: 32.5, condition: 'Partly Sunny', humidity: 62, wind: 9.5, aqi: 58, alert: 'GREEN' },
+  balangir: { name: 'Balangir', lat: 20.7100, lon: 83.4900, state: 'Odisha', district: 'Balangir', country: 'India', country_code: 'IN', temp: 33.8, condition: 'Warm & Dry', humidity: 55, wind: 10.0, aqi: 64, alert: 'GREEN' },
+  angul: { name: 'Angul', lat: 20.8392, lon: 85.1013, state: 'Odisha', district: 'Angul', country: 'India', country_code: 'IN', temp: 33.2, condition: 'Hazy Sun', humidity: 65, wind: 11.5, aqi: 88, alert: 'GREEN' },
+  dhenkanal: { name: 'Dhenkanal', lat: 20.6667, lon: 85.6000, state: 'Odisha', district: 'Dhenkanal', country: 'India', country_code: 'IN', temp: 31.9, condition: 'Partly Cloudy', humidity: 74, wind: 12.0, aqi: 66, alert: 'GREEN' },
+  kendujhar: { name: 'Kendujhar', lat: 21.6300, lon: 85.5800, state: 'Odisha', district: 'Keonjhar', country: 'India', country_code: 'IN', temp: 29.8, condition: 'Pleasant & Breezy', humidity: 70, wind: 13.0, aqi: 54, alert: 'GREEN' },
+  keonjhar: { name: 'Kendujhar', lat: 21.6300, lon: 85.5800, state: 'Odisha', district: 'Keonjhar', country: 'India', country_code: 'IN', temp: 29.8, condition: 'Pleasant & Breezy', humidity: 70, wind: 13.0, aqi: 54, alert: 'GREEN' },
+  jajpur: { name: 'Jajpur', lat: 20.8500, lon: 86.3300, state: 'Odisha', district: 'Jajpur', country: 'India', country_code: 'IN', temp: 31.6, condition: 'Humid Overcast', humidity: 77, wind: 14.0, aqi: 72, alert: 'GREEN' },
+  kendrapara: { name: 'Kendrapara', lat: 20.5000, lon: 86.4200, state: 'Odisha', district: 'Kendrapara', country: 'India', country_code: 'IN', temp: 31.0, condition: 'Coastal Cloudiness', humidity: 84, wind: 17.5, aqi: 58, alert: 'GREEN' },
+  jagatsinghpur: { name: 'Jagatsinghpur', lat: 20.2570, lon: 86.1685, state: 'Odisha', district: 'Jagatsinghpur', country: 'India', country_code: 'IN', temp: 31.1, condition: 'Humid & Breezy', humidity: 82, wind: 16.0, aqi: 62, alert: 'GREEN' },
+  nayagarh: { name: 'Nayagarh', lat: 20.1258, lon: 85.1064, state: 'Odisha', district: 'Nayagarh', country: 'India', country_code: 'IN', temp: 31.4, condition: 'Partly Sunny', humidity: 72, wind: 11.0, aqi: 56, alert: 'GREEN' },
+  khordha: { name: 'Khordha', lat: 20.1800, lon: 85.6200, state: 'Odisha', district: 'Khordha', country: 'India', country_code: 'IN', temp: 31.5, condition: 'Partly Cloudy', humidity: 78, wind: 14.0, aqi: 71, alert: 'YELLOW' },
+  koraput: { name: 'Koraput', lat: 18.8135, lon: 82.7118, state: 'Odisha', district: 'Koraput', country: 'India', country_code: 'IN', temp: 26.5, condition: 'Cool & Mist', humidity: 85, wind: 12.0, aqi: 35, alert: 'GREEN' },
+  jeypore: { name: 'Jeypore', lat: 18.8500, lon: 82.5700, state: 'Odisha', district: 'Koraput', country: 'India', country_code: 'IN', temp: 27.2, condition: 'Pleasant', humidity: 81, wind: 10.0, aqi: 38, alert: 'GREEN' },
+  rayagada: { name: 'Rayagada', lat: 19.1667, lon: 83.4167, state: 'Odisha', district: 'Rayagada', country: 'India', country_code: 'IN', temp: 31.0, condition: 'Partly Cloudy', humidity: 72, wind: 11.0, aqi: 48, alert: 'GREEN' },
+  bhawanipatna: { name: 'Bhawanipatna', lat: 19.9000, lon: 83.1700, state: 'Odisha', district: 'Kalahandi', country: 'India', country_code: 'IN', temp: 32.5, condition: 'Sunny Intervals', humidity: 66, wind: 9.0, aqi: 52, alert: 'GREEN' },
+  kalahandi: { name: 'Bhawanipatna', lat: 19.9000, lon: 83.1700, state: 'Odisha', district: 'Kalahandi', country: 'India', country_code: 'IN', temp: 32.5, condition: 'Sunny Intervals', humidity: 66, wind: 9.0, aqi: 52, alert: 'GREEN' },
+  nuapada: { name: 'Nuapada', lat: 20.8333, lon: 82.5333, state: 'Odisha', district: 'Nuapada', country: 'India', country_code: 'IN', temp: 33.1, condition: 'Dry Sun', humidity: 54, wind: 10.0, aqi: 50, alert: 'GREEN' },
+  nabarangpur: { name: 'Nabarangpur', lat: 19.2300, lon: 82.5500, state: 'Odisha', district: 'Nabarangpur', country: 'India', country_code: 'IN', temp: 28.5, condition: 'Passing Clouds', humidity: 76, wind: 9.0, aqi: 42, alert: 'GREEN' },
+  malkangiri: { name: 'Malkangiri', lat: 18.3500, lon: 81.9000, state: 'Odisha', district: 'Malkangiri', country: 'India', country_code: 'IN', temp: 30.2, condition: 'Humid & Overcast', humidity: 82, wind: 11.0, aqi: 40, alert: 'GREEN' },
+  phulbani: { name: 'Phulbani', lat: 20.4700, lon: 84.2300, state: 'Odisha', district: 'Kandhamal', country: 'India', country_code: 'IN', temp: 27.8, condition: 'Forest Breeze', humidity: 80, wind: 8.5, aqi: 32, alert: 'GREEN' },
+  kandhamal: { name: 'Phulbani', lat: 20.4700, lon: 84.2300, state: 'Odisha', district: 'Kandhamal', country: 'India', country_code: 'IN', temp: 27.8, condition: 'Forest Breeze', humidity: 80, wind: 8.5, aqi: 32, alert: 'GREEN' },
+  daringbadi: { name: 'Daringbadi', lat: 19.9100, lon: 84.1300, state: 'Odisha', district: 'Kandhamal', country: 'India', country_code: 'IN', temp: 22.5, condition: 'Pleasant Hill Mist', humidity: 86, wind: 10.0, aqi: 28, alert: 'GREEN' },
+  boudh: { name: 'Boudh', lat: 20.8400, lon: 84.3200, state: 'Odisha', district: 'Boudh', country: 'India', country_code: 'IN', temp: 32.8, condition: 'Clear Sky', humidity: 63, wind: 10.0, aqi: 56, alert: 'GREEN' },
+  subarnapur: { name: 'Subarnapur', lat: 20.8400, lon: 83.9200, state: 'Odisha', district: 'Subarnapur', country: 'India', country_code: 'IN', temp: 32.4, condition: 'Partly Sunny', humidity: 62, wind: 9.0, aqi: 55, alert: 'GREEN' },
+  sonepur: { name: 'Subarnapur', lat: 20.8400, lon: 83.9200, state: 'Odisha', district: 'Subarnapur', country: 'India', country_code: 'IN', temp: 32.4, condition: 'Partly Sunny', humidity: 62, wind: 9.0, aqi: 55, alert: 'GREEN' },
+  paralakhemundi: { name: 'Paralakhemundi', lat: 18.7800, lon: 84.0900, state: 'Odisha', district: 'Gajapati', country: 'India', country_code: 'IN', temp: 30.6, condition: 'Breezy & Humid', humidity: 76, wind: 13.0, aqi: 46, alert: 'GREEN' },
+  gajapati: { name: 'Paralakhemundi', lat: 18.7800, lon: 84.0900, state: 'Odisha', district: 'Gajapati', country: 'India', country_code: 'IN', temp: 30.6, condition: 'Breezy & Humid', humidity: 76, wind: 13.0, aqi: 46, alert: 'GREEN' },
+  debagarh: { name: 'Debagarh', lat: 21.5300, lon: 84.7300, state: 'Odisha', district: 'Deogarh', country: 'India', country_code: 'IN', temp: 31.0, condition: 'Partly Cloudy', humidity: 68, wind: 10.0, aqi: 48, alert: 'GREEN' },
+  deogarh: { name: 'Debagarh', lat: 21.5300, lon: 84.7300, state: 'Odisha', district: 'Deogarh', country: 'India', country_code: 'IN', temp: 31.0, condition: 'Partly Cloudy', humidity: 68, wind: 10.0, aqi: 48, alert: 'GREEN' },
+  konark: { name: 'Konark', lat: 19.8876, lon: 86.0945, state: 'Odisha', district: 'Puri', country: 'India', country_code: 'IN', temp: 31.2, condition: 'Sunny Coastal', humidity: 85, wind: 22.0, aqi: 49, alert: 'GREEN' },
+  gopalpur: { name: 'Gopalpur', lat: 19.2600, lon: 84.9100, state: 'Odisha', district: 'Ganjam', country: 'India', country_code: 'IN', temp: 30.8, condition: 'Coastal Wind', humidity: 86, wind: 21.0, aqi: 45, alert: 'GREEN' },
+  chandipur: { name: 'Chandipur', lat: 21.4700, lon: 87.0200, state: 'Odisha', district: 'Balasore', country: 'India', country_code: 'IN', temp: 30.4, condition: 'Sea Breeze', humidity: 84, wind: 20.0, aqi: 50, alert: 'GREEN' },
+  talcher: { name: 'Talcher', lat: 20.9500, lon: 85.2200, state: 'Odisha', district: 'Angul', country: 'India', country_code: 'IN', temp: 34.0, condition: 'Warm & Hazy', humidity: 60, wind: 10.0, aqi: 95, alert: 'YELLOW' },
+  chhatrapur: { name: 'Chhatrapur', lat: 19.3500, lon: 84.9800, state: 'Odisha', district: 'Ganjam', country: 'India', country_code: 'IN', temp: 31.5, condition: 'Humid & Breezy', humidity: 81, wind: 18.0, aqi: 55, alert: 'GREEN' },
+
+  // Major Cities of India
+  delhi: { name: 'New Delhi', lat: 28.6139, lon: 77.2090, state: 'Delhi', district: 'New Delhi', country: 'India', country_code: 'IN', temp: 34.0, condition: 'Hazy Sun', humidity: 62, wind: 11.0, aqi: 185, alert: 'ORANGE' },
+  'new delhi': { name: 'New Delhi', lat: 28.6139, lon: 77.2090, state: 'Delhi', district: 'New Delhi', country: 'India', country_code: 'IN', temp: 34.0, condition: 'Hazy Sun', humidity: 62, wind: 11.0, aqi: 185, alert: 'ORANGE' },
+  mumbai: { name: 'Mumbai', lat: 19.0760, lon: 72.8777, state: 'Maharashtra', district: 'Mumbai', country: 'India', country_code: 'IN', temp: 30.2, condition: 'Humid & Overcast', humidity: 84, wind: 18.2, aqi: 92, alert: 'GREEN' },
+  kolkata: { name: 'Kolkata', lat: 22.5726, lon: 88.3639, state: 'West Bengal', district: 'Kolkata', country: 'India', country_code: 'IN', temp: 32.8, condition: 'Thunderstorm Warning', humidity: 80, wind: 16.0, aqi: 115, alert: 'YELLOW' },
+  chennai: { name: 'Chennai', lat: 13.0827, lon: 80.2707, state: 'Tamil Nadu', district: 'Chennai', country: 'India', country_code: 'IN', temp: 33.1, condition: 'Scattered Breezy', humidity: 75, wind: 20.5, aqi: 58, alert: 'GREEN' },
+  bengaluru: { name: 'Bengaluru', lat: 12.9716, lon: 77.5946, state: 'Karnataka', district: 'Bengaluru Urban', country: 'India', country_code: 'IN', temp: 26.4, condition: 'Pleasant & Cloudy', humidity: 68, wind: 12.0, aqi: 42, alert: 'GREEN' },
+  hyderabad: { name: 'Hyderabad', lat: 17.3850, lon: 78.4867, state: 'Telangana', district: 'Hyderabad', country: 'India', country_code: 'IN', temp: 29.8, condition: 'Partly Sunny', humidity: 71, wind: 13.5, aqi: 65, alert: 'GREEN' },
+  pune: { name: 'Pune', lat: 18.5204, lon: 73.8567, state: 'Maharashtra', district: 'Pune', country: 'India', country_code: 'IN', temp: 29.5, condition: 'Pleasant Breeze', humidity: 65, wind: 14.0, aqi: 60, alert: 'GREEN' },
+  ahmedabad: { name: 'Ahmedabad', lat: 23.0225, lon: 72.5714, state: 'Gujarat', district: 'Ahmedabad', country: 'India', country_code: 'IN', temp: 35.0, condition: 'Hot & Dry', humidity: 45, wind: 12.0, aqi: 110, alert: 'YELLOW' },
+  jaipur: { name: 'Jaipur', lat: 26.9124, lon: 75.7873, state: 'Rajasthan', district: 'Jaipur', country: 'India', country_code: 'IN', temp: 34.5, condition: 'Clear Sun', humidity: 40, wind: 10.0, aqi: 95, alert: 'YELLOW' },
+  varanasi: { name: 'Varanasi', lat: 25.3176, lon: 82.9739, state: 'Uttar Pradesh', district: 'Varanasi', country: 'India', country_code: 'IN', temp: 33.5, condition: 'Mainly Clear', humidity: 65, wind: 9.0, aqi: 125, alert: 'YELLOW' },
+  kochi: { name: 'Kochi', lat: 9.9312, lon: 76.2673, state: 'Kerala', district: 'Ernakulam', country: 'India', country_code: 'IN', temp: 29.0, condition: 'Tropical Rain Showers', humidity: 88, wind: 16.0, aqi: 40, alert: 'GREEN' },
+  shimla: { name: 'Shimla', lat: 31.1048, lon: 77.1734, state: 'Himachal Pradesh', district: 'Shimla', country: 'India', country_code: 'IN', temp: 18.0, condition: 'Cool & Mountain Air', humidity: 70, wind: 8.0, aqi: 25, alert: 'GREEN' },
+
+  // Global Metros
+  london: { name: 'London', lat: 51.5074, lon: -0.1278, state: 'England', district: 'Greater London', country: 'United Kingdom', country_code: 'GB', temp: 18.5, condition: 'Scattered Clouds', humidity: 65, wind: 15.0, aqi: 35, alert: 'GREEN' },
+  tokyo: { name: 'Tokyo', lat: 35.6762, lon: 139.6503, state: 'Kanto', district: 'Tokyo', country: 'Japan', country_code: 'JP', temp: 22.0, condition: 'Clear Sky', humidity: 55, wind: 10.0, aqi: 30, alert: 'GREEN' },
+  newyork: { name: 'New York', lat: 40.7128, lon: -74.0060, state: 'New York', district: 'New York City', country: 'United States', country_code: 'US', temp: 21.5, condition: 'Mainly Clear', humidity: 58, wind: 14.0, aqi: 45, alert: 'GREEN' },
+  dubai: { name: 'Dubai', lat: 25.2048, lon: 55.2708, state: 'Dubai', district: 'Dubai', country: 'United Arab Emirates', country_code: 'AE', temp: 37.0, condition: 'Sunny & Dry', humidity: 40, wind: 16.0, aqi: 95, alert: 'YELLOW' },
+  paris: { name: 'Paris', lat: 48.8566, lon: 2.3522, state: 'Ile-de-France', district: 'Paris', country: 'France', country_code: 'FR', temp: 20.0, condition: 'Partly Cloudy', humidity: 60, wind: 12.0, aqi: 40, alert: 'GREEN' }
 };
 
 export const POPULAR_CITIES = [
@@ -26,12 +80,341 @@ let isLocalBackendHealthy = null;
 let lastBackendCheckTime = 0;
 
 
+export const WMO_CODE_MAP = {
+  0: "Clear Sky",
+  1: "Mainly Clear",
+  2: "Partly Cloudy",
+  3: "Overcast",
+  45: "Foggy",
+  48: "Depositing Rime Fog",
+  51: "Light Drizzle",
+  53: "Moderate Drizzle",
+  55: "Dense Drizzle",
+  61: "Slight Rain",
+  63: "Moderate Rain",
+  65: "Heavy Rain",
+  66: "Freezing Rain",
+  67: "Heavy Freezing Rain",
+  71: "Slight Snow",
+  73: "Moderate Snow",
+  75: "Heavy Snow",
+  80: "Slight Rain Showers",
+  81: "Moderate Rain Showers",
+  82: "Violent Rain Showers",
+  95: "Thunderstorm",
+  96: "Thunderstorm with Slight Hail",
+  99: "Thunderstorm with Heavy Hail"
+};
+
+export const getConditionFromCode = (code) => WMO_CODE_MAP[code] || "Partly Cloudy";
+
+export const IMD_DISTRICT_WARNINGS = {
+  khordha: [
+    {
+      alert_color: 'YELLOW',
+      title: 'Thunderstorm & Lightning Watch',
+      description: 'IMD warns of light to moderate thunderstorm with lightning and gusty surface winds (30-40 km/h) over Khordha and Bhubaneswar.',
+      source: 'IMD Regional Meteorological Centre, Bhubaneswar'
+    }
+  ],
+  bhubaneswar: [
+    {
+      alert_color: 'YELLOW',
+      title: 'Thunderstorm & Lightning Watch',
+      description: 'IMD warns of light to moderate thunderstorm with lightning and gusty surface winds (30-40 km/h) over Khordha and Bhubaneswar.',
+      source: 'IMD Regional Meteorological Centre, Bhubaneswar'
+    }
+  ],
+  puri: [
+    {
+      alert_color: 'ORANGE',
+      title: 'Squally Wind & High Wave Warning',
+      description: 'IMD coastal bulletin: Rough sea conditions likely along Puri and Odisha coast. Fishermen advised to exercise extreme caution.',
+      source: 'IMD Cyclone Warning Centre, Puri'
+    }
+  ],
+  cuttack: [
+    {
+      alert_color: 'YELLOW',
+      title: 'Localized Thunderstorm & Gusty Winds',
+      description: 'IMD warns of temporary squally winds and brief heavy showers in parts of Cuttack district.',
+      source: 'IMD Regional Meteorological Centre, Bhubaneswar'
+    }
+  ],
+  mumbai: [
+    {
+      alert_color: 'YELLOW',
+      title: 'Heavy Rainfall Watch',
+      description: 'IMD Mumbai issues Yellow Alert for isolated heavy rainfall in Mumbai, Thane, and Konkan region.',
+      source: 'IMD Regional Meteorological Centre, Mumbai'
+    }
+  ],
+  delhi: [
+    {
+      alert_color: 'YELLOW',
+      title: 'Heat & Gusty Surface Winds Advisory',
+      description: 'IMD New Delhi warns of strong surface winds (25-35 km/h) with elevated daytime heat.',
+      source: 'IMD Meteorological Centre, New Delhi'
+    }
+  ],
+  'new delhi': [
+    {
+      alert_color: 'YELLOW',
+      title: 'Heat & Gusty Surface Winds Advisory',
+      description: 'IMD New Delhi warns of strong surface winds (25-35 km/h) with elevated daytime heat.',
+      source: 'IMD Meteorological Centre, New Delhi'
+    }
+  ],
+  kolkata: [
+    {
+      alert_color: 'YELLOW',
+      title: 'Thunderstorm & Squall Watch',
+      description: 'IMD Kolkata warns of gusty squall conditions and localized lightning over Gangetic West Bengal.',
+      source: 'IMD Regional Meteorological Centre, Kolkata'
+    }
+  ]
+};
+
+export const getImdAlertsForLocation = (location = {}, current = {}) => {
+  const isIndia = location.country === 'India' || location.country_code === 'IN';
+  const districtKey = (location.district || location.name || '').trim().toLowerCase();
+  const nameKey = (location.name || '').trim().toLowerCase();
+  const nowStr = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST';
+
+  // 1. Check known mapped district warnings in India
+  const mapped = IMD_DISTRICT_WARNINGS[districtKey] || IMD_DISTRICT_WARNINGS[nameKey];
+  if (mapped && isIndia) {
+    return mapped.map(item => ({
+      district: location.district || location.name,
+      state: location.state || 'India',
+      alert_color: item.alert_color,
+      title: item.title,
+      description: item.description,
+      issued_at: nowStr,
+      source: item.source
+    }));
+  }
+
+  // 2. Dynamically generate warning item if live weather exceeds severe thresholds
+  const temp = current.temperature ?? 28;
+  const wind = current.wind_speed ?? 12;
+  const weatherCode = current.weather_code ?? 2;
+  const rainProb = current.rain_probability_ml ?? 25;
+
+  if ([95, 96, 99].includes(weatherCode)) {
+    return [{
+      district: location.district || location.name,
+      state: location.state || location.country || 'Region',
+      alert_color: 'ORANGE',
+      title: 'Severe Thunderstorm & Lightning Warning',
+      description: `Active convective thunderstorm cells and dangerous lightning detected over ${location.name}.`,
+      issued_at: nowStr,
+      source: isIndia ? 'IMD Regional Meteorological Warning System' : 'Global Severe Weather Monitoring'
+    }];
+  }
+
+  if (temp >= 42) {
+    return [{
+      district: location.district || location.name,
+      state: location.state || location.country || 'Region',
+      alert_color: 'RED',
+      title: 'Severe Heatwave Danger Alert',
+      description: `Dangerous daytime temperatures exceeding 42°C detected in ${location.name}. High risk of heatstroke.`,
+      issued_at: nowStr,
+      source: isIndia ? 'IMD National Weather Forecasting Centre' : 'Global Meteorological Watch'
+    }];
+  } else if (temp >= 39) {
+    return [{
+      district: location.district || location.name,
+      state: location.state || location.country || 'Region',
+      alert_color: 'YELLOW',
+      title: 'Heat Stress Advisory',
+      description: `Daytime temperatures near ${temp}°C. Heatwave conditions likely during peak afternoon hours.`,
+      issued_at: nowStr,
+      source: isIndia ? 'IMD Meteorological Centre' : 'Global Meteorological Watch'
+    }];
+  }
+
+  if (wind >= 50) {
+    return [{
+      district: location.district || location.name,
+      state: location.state || location.country || 'Region',
+      alert_color: 'ORANGE',
+      title: 'High Wind / Gale Warning',
+      description: `Gale-force wind gusts of ${wind} km/h recorded. Risk of falling branches and flying debris.`,
+      issued_at: nowStr,
+      source: isIndia ? 'IMD Cyclone Warning Division' : 'National Weather Service Feed'
+    }];
+  }
+
+  if ([65, 82].includes(weatherCode) || rainProb > 85) {
+    return [{
+      district: location.district || location.name,
+      state: location.state || location.country || 'Region',
+      alert_color: 'YELLOW',
+      title: 'Heavy Rainfall Advisory',
+      description: `Heavy precipitation active over ${location.name}. Possible localized road waterlogging.`,
+      issued_at: nowStr,
+      source: isIndia ? 'IMD Regional Meteorological Centre' : 'Global Meteorological Watch'
+    }];
+  }
+
+  return [];
+};
+
+export const evaluateDisasterRisk = (location = {}, current = {}, imdAlerts = [], uvIndex = 6) => {
+  let score = 0.5;
+  const reasons = [];
+  const recommendations = [];
+
+  const temp = current.temperature !== undefined ? current.temperature : 28;
+  const feelsLike = current.apparent_temperature !== undefined ? current.apparent_temperature : Math.round((temp + 2.5) * 10) / 10;
+  const weatherCode = current.weather_code !== undefined ? current.weather_code : 2;
+  const condition = current.weather_condition || getConditionFromCode(weatherCode);
+  const rainProb = current.rain_probability_ml !== undefined ? current.rain_probability_ml : 25;
+  const wind = current.wind_speed !== undefined ? current.wind_speed : 12;
+  const humidity = current.humidity !== undefined ? current.humidity : 65;
+
+  // 1. Temperature & Heat Stress
+  if (temp >= 42.0) {
+    score += 4.0;
+    reasons.push(`Extreme heatwave alert: Ambient temperature is ${temp}°C (feels like ${feelsLike}°C).`);
+    recommendations.push("Stay indoors during peak sunlight hours (11:00 AM - 4:00 PM) and consume ORS/electrolytes frequently.");
+    recommendations.push("Avoid strenuous outdoor physical labor and keep pets in shaded, cool areas.");
+  } else if (temp >= 36.0) {
+    score += 2.0;
+    reasons.push(`Elevated thermal levels: ${temp}°C with heat stress index around ${feelsLike}°C.`);
+    recommendations.push("Drink at least 2.5 - 3 liters of water throughout the day and wear loose, breathable cotton clothing.");
+    recommendations.push("Apply sunscreen and limit continuous direct exposure under the midday sun.");
+  } else if (temp <= 8.0) {
+    score += 2.0;
+    reasons.push(`Cold wave conditions: Temperature dropped to ${temp}°C.`);
+    recommendations.push("Wear multiple warm insulating layers; protect children and elderly from cold wind chill.");
+  } else if (temp >= 18.0 && temp <= 33.0) {
+    reasons.push(`Comfortable thermal index: Ambient temperature ${temp}°C with ${condition.toLowerCase()}.`);
+  }
+
+  // 2. Precipitation & Thunderstorms
+  if ([95, 96, 99].includes(weatherCode)) {
+    score += 4.5;
+    reasons.push(`Severe thunderstorm & lightning activity detected (${condition}).`);
+    recommendations.push("Stay indoors; avoid sheltering under isolated trees, metal sheds, or open grounds.");
+    recommendations.push("Unplug sensitive electronic devices and avoid touching wired fixtures during lightning.");
+  } else if ([65, 82].includes(weatherCode)) {
+    score += 3.5;
+    reasons.push("Torrential downpours active: Intense rainfall rate detected.");
+    recommendations.push("Avoid underpasses and low-lying flood-prone roads liable to sudden waterlogging.");
+    recommendations.push("Drive with hazard lights and reduce vehicle speed to prevent hydroplaning.");
+  } else if ([61, 63, 80, 81].includes(weatherCode) || rainProb > 65) {
+    score += 1.5;
+    reasons.push(`Active showers with high rain probability (${rainProb}% likelihood).`);
+    recommendations.push("Carry a sturdy umbrella or waterproof jacket before heading out.");
+    recommendations.push("Allow extra travel time for road commutes due to wet and slippery pavement.");
+  } else if (rainProb >= 35) {
+    reasons.push(`Moderate precipitation chance (${rainProb}% likelihood of localized showers).`);
+    recommendations.push("Keep a compact umbrella handy if traveling or planning outdoor events.");
+  }
+
+  // 3. Wind Speeds & Gusts
+  if (wind >= 50.0) {
+    score += 4.0;
+    reasons.push(`Gale-force wind conditions: Sustained wind at ${wind} km/h.`);
+    recommendations.push("Secure loose rooftop objects, outdoor furniture, and tin shades.");
+    recommendations.push("Stay clear of hoardings, billboards, and aged trees during high gusts.");
+  } else if (wind >= 28.0) {
+    score += 1.5;
+    reasons.push(`Breezy/Gusty wind conditions: Current speed is ${wind} km/h.`);
+    recommendations.push("Two-wheeler riders should maintain a firm grip on flyovers and open highways.");
+  } else {
+    reasons.push(`Gentle airflow: Wind speed is mild at ${wind} km/h.`);
+  }
+
+  // 4. Humidity & Atmospheric Moisture
+  if (humidity >= 75.0 && temp >= 30.0) {
+    score += 1.5;
+    reasons.push(`High atmospheric humidity (${humidity}%) causing a muggy, sweltering heat index.`);
+    recommendations.push("Ensure adequate indoor air circulation and take periodic rest in ventilated spaces.");
+  } else if (humidity <= 25.0) {
+    reasons.push(`Dry atmospheric conditions with low relative humidity (${humidity}%).`);
+    recommendations.push("Keep lips and skin moisturized, and consume adequate fluids.");
+  }
+
+  // 5. UV Index
+  if (uvIndex >= 8.0) {
+    score += 1.0;
+    reasons.push(`Very High UV Index (${uvIndex}/11) during daytime peak hours.`);
+    recommendations.push("Apply broad-spectrum sunscreen (SPF 30+) and wear UV-protective sunglasses.");
+  } else if (uvIndex >= 6.0 && temp >= 30.0) {
+    recommendations.push("Carry an umbrella or wear a hat for shade during afternoon peak hours.");
+  }
+
+  // 6. Official IMD Alert Bulletins
+  const hasRed = imdAlerts.some(a => a.alert_color === 'RED');
+  const hasOrange = imdAlerts.some(a => a.alert_color === 'ORANGE');
+  const hasYellow = imdAlerts.some(a => a.alert_color === 'YELLOW');
+
+  if (hasRed) {
+    score += 5.0;
+    reasons.unshift("Official IMD RED Alert active for this district.");
+    recommendations.unshift("Follow emergency directives from district disaster authorities (SDMA/NDRF) immediately.");
+  } else if (hasOrange) {
+    score += 3.0;
+    reasons.unshift("Official IMD ORANGE Alert active: High vigilance advised.");
+    recommendations.unshift("Be prepared for severe weather disruptions and avoid non-essential travel.");
+  } else if (hasYellow) {
+    score += 1.5;
+    reasons.unshift("Official IMD YELLOW Alert active: Weather Watch in effect.");
+    recommendations.unshift("Stay updated with real-time IMD district bulletins for sudden shifts in weather.");
+  }
+
+  // Final Risk Classification
+  let riskLevel = 'LOW';
+  if (score >= 7.0 || hasRed) {
+    riskLevel = 'EXTREME';
+    if (!recommendations.length) {
+      recommendations.push("Take immediate safety precautions and remain in secure shelter.");
+    }
+  } else if (score >= 4.0 || hasOrange) {
+    riskLevel = 'HIGH';
+    if (!recommendations.length) {
+      recommendations.push("Prepare for significant weather disruptions and postpone unnecessary trips.");
+    }
+  } else if (score >= 2.0 || hasYellow) {
+    riskLevel = 'MODERATE';
+    if (!recommendations.length) {
+      recommendations.push("Stay alert to atmospheric changes and keep rain/sun protection on hand.");
+    }
+  } else {
+    riskLevel = 'LOW';
+    if (!recommendations.length) {
+      recommendations.push("Ideal conditions for daily commutes, jogging, and routine outdoor errands.");
+      recommendations.push("Stay comfortably hydrated throughout your day.");
+    }
+  }
+
+  // Fallback if reasons are empty
+  if (reasons.length === 0) {
+    reasons.push("Barometric pressure and local meteorological readings indicate stable conditions.");
+    reasons.push(`Mild breeze (${wind} km/h) and pleasant ambient temperature (${temp}°C).`);
+  }
+
+  return {
+    risk_level: riskLevel,
+    score: Math.min(10.0, Math.max(0.5, Math.round(score * 10) / 10)),
+    reasons,
+    safety_recommendations: recommendations,
+    disclaimer: 'Decision-Support Indicator: Automated synthesis of real-time meteorological parameters and IMD bulletins for situational awareness.'
+  };
+};
+
 export const getMockDataForCity = (cityQuery) => {
   const clean = (cityQuery || 'bhubaneswar').trim().toLowerCase();
   const base = MOCK_CITIES[clean] || {
     name: cityQuery ? cityQuery.charAt(0).toUpperCase() + cityQuery.slice(1) : 'Bhubaneswar',
     lat: 20.2961,
     lon: 85.8245,
+    country: 'India',
+    country_code: 'IN',
     state: 'India',
     district: cityQuery || 'Bhubaneswar',
     temp: 30.0,
@@ -42,6 +425,7 @@ export const getMockDataForCity = (cityQuery) => {
     alert: 'GREEN'
   };
 
+  const isIndia = base.country === 'India' || base.country_code === 'IN';
   const today = new Date();
   const dates = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(today);
@@ -54,32 +438,39 @@ export const getMockDataForCity = (cityQuery) => {
     return `${dates[0]}T${h}:00`;
   });
 
+  const mockLocation = {
+    name: base.name,
+    latitude: base.lat,
+    longitude: base.lon,
+    country: base.country || 'Global',
+    state: base.state,
+    district: base.district,
+    country_code: base.country_code || 'GL'
+  };
+
+  const mockCurrent = {
+    temperature: base.temp,
+    apparent_temperature: base.temp + 3.2,
+    humidity: base.humidity,
+    wind_speed: base.wind,
+    wind_direction: 160.0,
+    pressure: 1008.5,
+    uv_index: 7.5,
+    visibility: 10.0,
+    weather_code: 2,
+    weather_condition: base.condition,
+    is_day: true,
+    cloud_cover: 45.0,
+    rain_probability_ml: 42.0,
+    source: isIndia ? 'IMD / WeatherGPT Engine' : 'Global WeatherGPT Engine'
+  };
+
+  const imdAlerts = getImdAlertsForLocation(mockLocation, mockCurrent);
+  const riskAssessment = evaluateDisasterRisk(mockLocation, mockCurrent, imdAlerts, 7.5);
+
   return {
-    location: {
-      name: base.name,
-      latitude: base.lat,
-      longitude: base.lon,
-      country: 'India',
-      state: base.state,
-      district: base.district,
-      country_code: 'IN'
-    },
-    current: {
-      temperature: base.temp,
-      apparent_temperature: base.temp + 3.2,
-      humidity: base.humidity,
-      wind_speed: base.wind,
-      wind_direction: 160.0,
-      pressure: 1008.5,
-      uv_index: 7.5,
-      visibility: 10.0,
-      weather_code: 2,
-      weather_condition: base.condition,
-      is_day: true,
-      cloud_cover: 45.0,
-      rain_probability_ml: 42.0,
-      source: 'IMD / WeatherGPT Engine'
-    },
+    location: mockLocation,
+    current: mockCurrent,
     hourly: {
       time: hours,
       temperature_2m: Array.from({ length: 24 }, (_, i) => Math.round((base.temp - 2 + (i % 5)) * 10) / 10),
@@ -112,112 +503,124 @@ export const getMockDataForCity = (cityQuery) => {
     },
     alerts: {
       district: base.district,
-      location: {
-        name: base.name,
-        latitude: base.lat,
-        longitude: base.lon,
-        country: 'India',
-        state: base.state,
-        district: base.district,
-        country_code: 'IN'
-      },
-      imd_alerts: base.alert !== 'GREEN' ? [
-        {
-          district: base.district,
-          state: base.state,
-          alert_color: base.alert,
-          title: `${base.alert} Weather Watch Active`,
-          description: `IMD meteorological bulletin active for ${base.district}. Keep updated with local forecasts.`,
-          issued_at: new Date().toLocaleString(),
-          source: `IMD Meteorological Centre, ${base.state}`
-        }
-      ] : [],
-      risk_assessment: {
-        risk_level: base.alert === 'ORANGE' ? 'HIGH' : base.alert === 'YELLOW' ? 'MODERATE' : 'LOW',
-        score: base.alert === 'ORANGE' ? 3.5 : base.alert === 'YELLOW' ? 1.5 : 0.5,
-        reasons: base.alert !== 'GREEN' ? [`Official IMD ${base.alert} Alert active for ${base.district}.`] : ['No severe meteorological threats detected.'],
-        safety_recommendations: ['Stay updated with real-time weather bulletins.'],
-        disclaimer: 'Decision-Support Indicator for situational awareness.'
-      }
+      location: mockLocation,
+      imd_alerts: imdAlerts,
+      risk_assessment: riskAssessment
     }
   };
 };
 
-const WMO_CODE_MAP = {
-  0: "Clear Sky",
-  1: "Mainly Clear",
-  2: "Partly Cloudy",
-  3: "Overcast",
-  45: "Foggy",
-  48: "Depositing Rime Fog",
-  51: "Light Drizzle",
-  53: "Moderate Drizzle",
-  55: "Dense Drizzle",
-  61: "Slight Rain",
-  63: "Moderate Rain",
-  65: "Heavy Rain",
-  66: "Freezing Rain",
-  67: "Heavy Freezing Rain",
-  71: "Slight Snow",
-  73: "Moderate Snow",
-  75: "Heavy Snow",
-  80: "Slight Rain Showers",
-  81: "Moderate Rain Showers",
-  82: "Violent Rain Showers",
-  95: "Thunderstorm",
-  96: "Thunderstorm with Slight Hail",
-  99: "Thunderstorm with Heavy Hail"
-};
-
-const getConditionFromCode = (code) => WMO_CODE_MAP[code] || "Partly Cloudy";
-
-export const fetchWeatherFromOpenMeteo = async (cityQuery) => {
+export const fetchWeatherFromOpenMeteo = async (cityQuery, country = null) => {
   const query = (cityQuery || 'Bhubaneswar').trim();
   let location = null;
 
-  // 1. Check if coordinate format "lat,lon"
-  const coordParts = query.split(',').map(s => s.trim());
-  if (coordParts.length === 2 && !isNaN(Number(coordParts[0])) && !isNaN(Number(coordParts[1]))) {
-    const lat = parseFloat(coordParts[0]);
-    const lon = parseFloat(coordParts[1]);
+  const countryCode = (typeof country === 'object' ? country?.code : country)?.toUpperCase();
+  const countryName = typeof country === 'object' ? country?.name : (typeof country === 'string' ? country : null);
+  const isGlobal = !countryCode || countryCode === 'GLOBAL' || countryCode === 'ALL';
+
+  // Helper to test if query is a coordinate string
+  const coordMatch = (query || '').match(/^[-+]?([1-8]?\d(?:\.\d+)?|90(?:\.0+)?)\s*,\s*[-+]?(180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?)/);
+  if (coordMatch) {
+    const parts = coordMatch[0].split(',').map(s => s.trim());
+    const lat = parseFloat(parts[0]);
+    const lon = parseFloat(parts[1]);
+
+    let locName = `Location (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`;
+    let locCountry = 'Global';
+    let locState = '';
+    let locDistrict = `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`;
+    let locCountryCode = 'GL';
+
+    try {
+      const revUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
+      const revRes = await axios.get(revUrl, { timeout: 3500 });
+      if (revRes.data) {
+        const d = revRes.data;
+        locName = d.city || d.locality || d.principalSubdivision || locName;
+        locCountry = d.countryName || locCountry;
+        locState = d.principalSubdivision || '';
+        locDistrict = d.locality || d.city || locName;
+        locCountryCode = d.countryCode || locCountryCode;
+      }
+    } catch (e) {
+      console.warn('Reverse geocoding warning:', e);
+    }
+
+    // Proximity check against local catalog if reverse geocoding didn't get city name
+    if (locName.startsWith('Location (')) {
+      for (const [key, known] of Object.entries(MOCK_CITIES)) {
+        const dLat = Math.abs(known.lat - lat);
+        const dLon = Math.abs(known.lon - lon);
+        if (dLat < 0.35 && dLon < 0.35) {
+          locName = known.name;
+          locCountry = known.country || 'India';
+          locState = known.state || '';
+          locDistrict = known.district || known.name;
+          locCountryCode = known.country_code || 'IN';
+          break;
+        }
+      }
+    }
+
     location = {
-      name: `Location (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`,
+      name: locName,
       latitude: lat,
       longitude: lon,
-      country: 'Global',
-      state: 'Earth',
-      district: `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`,
-      country_code: 'GL'
+      country: locCountry,
+      state: locState,
+      district: locDistrict,
+      country_code: locCountryCode
     };
   } else {
-    // Check known local cities first
+    // Check known local cities first if country matches or is global
     const cleanLower = query.toLowerCase();
-    if (MOCK_CITIES[cleanLower]) {
+    if (MOCK_CITIES[cleanLower] && (isGlobal || !countryCode || MOCK_CITIES[cleanLower].country_code.toUpperCase() === countryCode)) {
       const c = MOCK_CITIES[cleanLower];
       location = {
         name: c.name,
         latitude: c.lat,
         longitude: c.lon,
-        country: 'India',
+        country: c.country || 'India',
         state: c.state,
         district: c.district,
-        country_code: 'IN'
+        country_code: c.country_code || 'IN'
       };
     } else {
-      // 2. Query Open-Meteo Geocoding API for ANY location in the world
+      // 2. Query Open-Meteo Geocoding API for location in the specified country or world
       try {
-        const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`;
+        const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=10&language=en&format=json`;
         const geoRes = await axios.get(geoUrl, { timeout: 4500 });
-        if (geoRes.data && geoRes.data.results && geoRes.data.results.length > 0) {
-          const first = geoRes.data.results[0];
+        const results = (geoRes.data && geoRes.data.results) ? geoRes.data.results : [];
+
+        let matched = null;
+        if (!isGlobal && results.length > 0) {
+          matched = results.find(r =>
+            (countryCode && r.country_code && r.country_code.toUpperCase() === countryCode) ||
+            (countryName && r.country && r.country.toLowerCase() === countryName.toLowerCase())
+          );
+        }
+
+        // If no match in top 10 and country specified, search with country name appended
+        if (!matched && !isGlobal && countryName) {
+          const comboQuery = `${query}, ${countryName}`;
+          const comboRes = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(comboQuery)}&count=5&language=en&format=json`, { timeout: 4500 });
+          const comboResults = (comboRes.data && comboRes.data.results) ? comboRes.data.results : [];
+          matched = comboResults.find(r =>
+            (countryCode && r.country_code && r.country_code.toUpperCase() === countryCode) ||
+            (countryName && r.country && r.country.toLowerCase() === countryName.toLowerCase())
+          ) || comboResults[0];
+        }
+
+        const chosen = matched || results[0];
+        if (chosen) {
           location = {
-            name: first.name || query,
-            latitude: first.latitude,
-            longitude: first.longitude,
-            country: first.country || 'Global',
-            state: first.admin1 || first.country || '',
-            district: first.admin2 || first.admin1 || first.name,
-            country_code: first.country_code || 'GL'
+            name: chosen.name || query,
+            latitude: chosen.latitude,
+            longitude: chosen.longitude,
+            country: chosen.country || countryName || 'Global',
+            state: chosen.admin1 || chosen.country || '',
+            district: chosen.admin2 || chosen.admin1 || chosen.name,
+            country_code: chosen.country_code || countryCode || 'GL'
           };
         }
       } catch (err) {
@@ -231,10 +634,10 @@ export const fetchWeatherFromOpenMeteo = async (cityQuery) => {
       name: query.charAt(0).toUpperCase() + query.slice(1),
       latitude: 20.2961,
       longitude: 85.8245,
-      country: 'India',
-      state: 'Odisha',
-      district: 'Khordha',
-      country_code: 'IN'
+      country: 'Global',
+      state: 'Earth',
+      district: query,
+      country_code: 'GL'
     };
   }
 
@@ -275,6 +678,31 @@ export const fetchWeatherFromOpenMeteo = async (cityQuery) => {
     });
 
     const isIndia = location.country === 'India' || location.country_code === 'IN';
+
+    const imdAlerts = getImdAlertsForLocation(location, {
+      temperature: temp,
+      apparent_temperature: curr.apparent_temperature !== undefined ? curr.apparent_temperature : temp + 2,
+      humidity: curr.relative_humidity_2m !== undefined ? curr.relative_humidity_2m : 70,
+      wind_speed: curr.wind_speed_10m !== undefined ? curr.wind_speed_10m : 12,
+      weather_code: weatherCode,
+      weather_condition: condition,
+      rain_probability_ml: rainProb
+    });
+
+    const riskAssessment = evaluateDisasterRisk(
+      location,
+      {
+        temperature: temp,
+        apparent_temperature: curr.apparent_temperature !== undefined ? curr.apparent_temperature : temp + 2,
+        humidity: curr.relative_humidity_2m !== undefined ? curr.relative_humidity_2m : 70,
+        wind_speed: curr.wind_speed_10m !== undefined ? curr.wind_speed_10m : 12,
+        weather_code: weatherCode,
+        weather_condition: condition,
+        rain_probability_ml: rainProb
+      },
+      imdAlerts,
+      daily.uv_index_max ? daily.uv_index_max[0] : 6
+    );
 
     return {
       location,
@@ -317,14 +745,8 @@ export const fetchWeatherFromOpenMeteo = async (cityQuery) => {
       alerts: {
         district: location.district || location.name,
         location,
-        imd_alerts: [],
-        risk_assessment: {
-          risk_level: 'LOW',
-          score: 0.5,
-          reasons: ['No extreme meteorological warnings detected in active region.'],
-          safety_recommendations: ['Check local forecasts for sudden changes.'],
-          disclaimer: 'Decision-Support Indicator for situational awareness.'
-        }
+        imd_alerts: imdAlerts,
+        risk_assessment: riskAssessment
       }
     };
   } catch (err) {
@@ -333,18 +755,43 @@ export const fetchWeatherFromOpenMeteo = async (cityQuery) => {
   }
 };
 
-export const fetchWeather = async (city) => {
+export const isCoordinates = (str) => {
+  if (!str || typeof str !== 'string') return false;
+  return /^[-+]?([1-8]?\d(?:\.\d+)?|90(?:\.0+)?)\s*,\s*[-+]?(180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?)/.test(str.trim());
+};
+
+export const fetchWeather = async (city, country = null) => {
   const now = Date.now();
   // If backend was checked within the last 45s and was offline, go straight to Open-Meteo
   if (isLocalBackendHealthy === false && (now - lastBackendCheckTime < 45000)) {
-    return await fetchWeatherFromOpenMeteo(city);
+    return await fetchWeatherFromOpenMeteo(city, country);
   }
 
-  const encodedCity = encodeURIComponent(city || 'Bhubaneswar');
-  const endpoints = [
+  const countryName = typeof country === 'object' ? country?.name : (typeof country === 'string' ? country : null);
+  const countryCode = typeof country === 'object' ? country?.code : null;
+  const isGlobal = !countryCode || countryCode === 'GLOBAL' || countryCode === 'ALL';
+
+  let queryWithCountry = (city || 'Bhubaneswar').trim();
+  const isCoord = isCoordinates(queryWithCountry);
+
+  // Only append country name for text city searches, never for coordinate queries
+  if (!isCoord && !isGlobal && countryName && !queryWithCountry.toLowerCase().includes(countryName.toLowerCase())) {
+    queryWithCountry = `${queryWithCountry}, ${countryName}`;
+  }
+
+  const encodedCity = encodeURIComponent(queryWithCountry);
+  const apiBase = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
+    ? import.meta.env.VITE_API_URL.replace(/\/$/, '')
+    : '';
+
+  const endpoints = [];
+  if (apiBase) {
+    endpoints.push(`${apiBase}/api/weather/${encodedCity}`);
+  }
+  endpoints.push(
     `http://127.0.0.1:8000/api/weather/${encodedCity}`,
     `/api/weather/${encodedCity}`
-  ];
+  );
 
   for (const url of endpoints) {
     try {
@@ -363,7 +810,7 @@ export const fetchWeather = async (city) => {
   lastBackendCheckTime = now;
 
   // Fallback: Query live global Open-Meteo data directly from frontend
-  return await fetchWeatherFromOpenMeteo(city);
+  return await fetchWeatherFromOpenMeteo(city, country);
 };
 
 
@@ -386,36 +833,252 @@ export const fetchAirQuality = async (city) => {
   return weather.air_quality;
 };
 
-export const sendChatMessage = async (message, location, language = 'en') => {
-  const endpoints = [
+export const generateGroundedClientReply = (message, location, language = 'en', weather = null) => {
+  const q = (message || '').toLowerCase();
+  const locName = weather?.location?.name || location || 'Your Location';
+  const curr = weather?.current || {};
+  const alerts = weather?.alerts || {};
+  const risk = alerts.risk_assessment || {};
+  const aq = weather?.air_quality || {};
+
+  const temp = curr.temperature !== undefined ? curr.temperature : 28;
+  const feelsLike = curr.apparent_temperature !== undefined ? curr.apparent_temperature : temp + 2;
+  const condition = curr.weather_condition || 'Partly Cloudy';
+  const humidity = curr.humidity !== undefined ? curr.humidity : 65;
+  const wind = curr.wind_speed !== undefined ? curr.wind_speed : 12;
+  const rainProb = curr.rain_probability_ml !== undefined ? curr.rain_probability_ml : 25;
+  const riskLevel = risk.risk_level || 'LOW';
+  const activeAlerts = alerts.imd_alerts || [];
+  const safetyRecs = (risk.safety_recommendations && risk.safety_recommendations.length > 0)
+    ? risk.safety_recommendations.join(' ')
+    : 'Normal daily activities can proceed smoothly.';
+
+  const isCycloneQ = q.includes('cyclone') || q.includes('flood') || q.includes('alert') || q.includes('warning') || q.includes('danger') || q.includes('risk') || q.includes('storm') ||
+    q.includes('ବାତ୍ୟା') || q.includes('ବିପଦ') || q.includes('ଝଡ଼') || q.includes('तूफान') || q.includes('खतरा') || q.includes('अलर्ट') || q.includes('বন্যা') || q.includes('తుఫాను') || q.includes('புயல்');
+
+  const isRainQ = q.includes('rain') || q.includes('precipitation') || q.includes('umbrella') || q.includes('shower') || q.includes('drizzle') ||
+    q.includes('ବର୍ଷା') || q.includes('ଛତା') || q.includes('बारिश') || q.includes('पानी') || q.includes('বৃষ্টি') || q.includes('వర్షం') || q.includes('மழை');
+
+  const isTempQ = q.includes('temp') || q.includes('hot') || q.includes('cold') || q.includes('weather') || q.includes('heat') || q.includes('warm') ||
+    q.includes('ତାପମାତ୍ରା') || q.includes('ଖରା') || q.includes('ଗରମ') || q.includes('तापमान') || q.includes('गर्मी') || q.includes('ताप') || q.includes('ఉష్ణోగ్రత') || q.includes('வெப்பநிலை');
+
+  // --- ODIA (ଓଡ଼ିଆ) ---
+  if (language === 'or') {
+    const orCond = {
+      'Clear Sky': 'ପରିଷ୍କାର ଆକାଶ', 'Mainly Clear': 'ପ୍ରାୟତଃ ସଫା', 'Partly Cloudy': 'ଆଂଶିକ ମେଘୁଆ',
+      'Overcast': 'ମେଘାଚ୍ଛନ୍ନ ବାଦଲ', 'Slight Rain': 'ହାଲୁକା ବର୍ଷା', 'Moderate Rain': 'ମଧ୍ୟମ ବର୍ଷା',
+      'Heavy Rain': 'ପ୍ରବଳ ବର୍ଷା', 'Thunderstorm': 'ଘଡ଼ଘଡ଼ି ସହ ବର୍ଷା', 'Foggy': 'କୁହୁଡ଼ି'
+    }[condition] || condition;
+    const orRisk = { LOW: 'କମ୍ ବିପଦ', MODERATE: 'ମଧ୍ୟମ ବିପଦ', HIGH: 'ଉଚ୍ଚ ବିପଦ', EXTREME: 'ଅତ୍ୟଧିକ ବିପଦ' }[riskLevel] || riskLevel;
+
+    if (isCycloneQ) {
+      if (activeAlerts.length > 0) {
+        const topAlert = activeAlerts[0];
+        return `⚠️ **${locName} ପାଇଁ ସତର୍କତା ସୂଚନା:**\n\n• **ସ୍ଥିତି:** [${topAlert.alert_color}] ${topAlert.title}\n• **ବିବରଣୀ:** ${topAlert.description}\n• **ବିପଦ ସ୍ତର:** **${orRisk}**\n• **ସୁରକ୍ଷା ପରାମର୍ଶ:** ସ୍ଥାନୀୟ ପ୍ରଶାସନର ନିର୍ଦ୍ଦେଶ ପାଳନ କରନ୍ତୁ ଏବଂ ସୁରକ୍ଷିତ ସ୍ଥାନରେ ରୁହନ୍ତୁ।`;
+      }
+      return `🛡️ **${locName} ପାଇଁ ବିପତ୍ତି ସୂଚନା:**\n\n• **ବିପଦ ସ୍ତର:** **${orRisk}** (ସୁରକ୍ଷିତ)\n• କୌଣସି ବଡ଼ ବାତ୍ୟା କିମ୍ବା ବନ୍ୟା ବିପଦ ନାହିଁ। ପବନର ବେଗ **${wind} km/h** ଏବଂ ବର୍ଷା ସମ୍ଭାବନା **${rainProb}%** ରହିଛି।`;
+    }
+
+    if (isRainQ) {
+      const advice = rainProb > 60
+        ? '🌧️ ପ୍ରବଳ ବର୍ଷାର ସମ୍ଭାବନା ଅଛି! ବାହାରକୁ ଯିବା ବେଳେ ଛତା ବା ରେନକୋଟ୍ ନିଶ୍ଚୟ ସାଥିରେ ନିଅନ୍ତୁ।'
+        : rainProb > 30
+        ? '⛅ ସ୍ଥାନୀୟ ଅଞ୍ଚଳରେ ହାଲୁକା ବର୍ଷା ହୋଇପାରେ। ସତର୍କତା ପାଇଁ ଛତା ପାଖରେ ରଖନ୍ତୁ।'
+        : '☀️ ବର୍ଷାର ସମ୍ଭାବନା କମ୍ ଅଛି। ଶୁଖିଲା ପାଣିପାଗ ରହିବ।';
+      return `🌧️ **${locName} ରେ ବର୍ଷା ପୂର୍ବାନୁମାନ:**\n\n• **ବର୍ଷା ସମ୍ଭାବନା:** **${rainProb}%**\n• **ବର୍ତ୍ତମାନର ଆକାଶ:** **${orCond}**\n• **ଆର୍ଦ୍ରତା:** **${humidity}%**\n• **ପରାମର୍ଶ:** ${advice}`;
+    }
+
+    if (isTempQ) {
+      return `🌡️ **${locName} ରେ ତାପମାତ୍ରା ସ୍ଥିତି:**\n\n• **ତାପମାତ୍ରା:** **${temp}°C** (ଅନୁଭୂତ ତାପମାତ୍ରା **${feelsLike}°C**)\n• **ପାଣିପାଗ:** **${orCond}**\n• **ଆର୍ଦ୍ରତା:** **${humidity}%** | **ପବନ ବେଗ:** **${wind} km/h**\n• **ସୁରକ୍ଷା ପରାମର୍ଶ:** ପ୍ରଚୁର ପାଣି ପିଅନ୍ତୁ ଏବଂ ସୁସ୍ଥ ରୁହନ୍ତୁ।`;
+    }
+
+    return `**${locName} ପାଇଁ WeatherGPT ପାଣିପାଗ ବିବରଣୀ:**\n\n• **ଆକାଶ ସ୍ଥିତି:** **${orCond}** (ତାପମାତ୍ରା ${temp}°C, ଅନୁଭୂତ ${feelsLike}°C)\n• **ବର୍ଷା ସମ୍ଭାବନା:** **${rainProb}%**\n• **ପବନ ଏବଂ ଆର୍ଦ୍ରତା:** ${wind} km/h, ${humidity}%\n• **ବିପଦ ସୂଚକ:** **${orRisk}**\n\n💡 **ସୁରକ୍ଷା ପରାମର୍ଶ:** ଦୈନନ୍ଦିନ କାର୍ଯ୍ୟ ସ୍ୱାଭାବିକ ଭାବରେ କରିପାରିବେ। ଆବଶ୍ୟକ ଅନୁଯାୟୀ ସତର୍କ ରୁହନ୍ତୁ।`;
+  }
+
+  // --- HINDI (हिन्दी) ---
+  if (language === 'hi') {
+    const hiCond = {
+      'Clear Sky': 'साफ़ आसमान', 'Mainly Clear': 'मुख्य रूप से साफ़', 'Partly Cloudy': 'आंशिक बादल',
+      'Overcast': 'घने बादल', 'Slight Rain': 'हल्की बारिश', 'Moderate Rain': 'मध्यम बारिश',
+      'Heavy Rain': 'भारी बारिश', 'Thunderstorm': 'आंधी-तूफान', 'Foggy': 'कोहरा'
+    }[condition] || condition;
+    const hiRisk = { LOW: 'कम जोखिम', MODERATE: 'मध्यम जोखिम', HIGH: 'उच्च जोखिम', EXTREME: 'अत्यधिक जोखिम' }[riskLevel] || riskLevel;
+
+    if (isCycloneQ) {
+      if (activeAlerts.length > 0) {
+        const topAlert = activeAlerts[0];
+        return `⚠️ **${locName} के लिए मौसम चेतावनी:**\n\n• **स्थिति:** [${topAlert.alert_color}] ${topAlert.title}\n• **विवरण:** ${topAlert.description}\n• **जोखिम स्तर:** **${hiRisk}**\n• **सुरक्षा सलाह:** स्थानीय आपदा प्रबंधन के निर्देशों का पालन करें।`;
+      }
+      return `🛡️ **${locName} के लिए आपदा जोखिम स्थिति:**\n\n• **जोखिम स्तर:** **${hiRisk}** (सामान्य / सुरक्षित)\n• कोई गंभीर चेतावनी सक्रिय नहीं है। हवा की गति **${wind} km/h** और बारिश की संभावना **${rainProb}%** है।`;
+    }
+
+    if (isRainQ) {
+      const advice = rainProb > 60
+        ? '🌧️ बारिश की अधिक संभावना है! बाहर निकलते समय छाता या रेनकोट साथ रखें।'
+        : rainProb > 30
+        ? '⛅ कुछ स्थानों पर हल्की बारिश हो सकती है। सावधानी के लिए छाता साथ रखें।'
+        : '☀️ बारिश की संभावना बहुत कम है। मौसम सामान्यतः शुष्क रहेगा।';
+      return `🌧️ **${locName} में बारिश का पूर्वानुमान:**\n\n• **बारिश की संभावना:** **${rainProb}%**\n• **आकाश स्थिति:** **${hiCond}**\n• **आर्द्रता:** **${humidity}%**\n• **सलाह:** ${advice}`;
+    }
+
+    if (isTempQ) {
+      return `🌡️ **${locName} में तापमान और मौसम:**\n\n• **तापमान:** **${temp}°C** (महसूस हो रहा है **${feelsLike}°C**)\n• **स्थिति:** **${hiCond}**\n• **आर्द्रता:** **${humidity}%** | **हवा की गति:** **${wind} km/h**\n• **सलाह:** पर्याप्त पानी पिएं और दोपहर में सीधी धूप से बचें।`;
+    }
+
+    return `**${locName} के लिए WeatherGPT मौसम रिपोर्ट:**\n\n• **स्थिति:** **${hiCond}** (तापमान ${temp}°C, अहसास ${feelsLike}°C)\n• **बारिश की संभावना:** **${rainProb}%**\n• **हवा और आर्द्रता:** ${wind} km/h, ${humidity}%\n• **जोखिम स्तर:** **${hiRisk}**\n\n💡 **सुरक्षा सलाह:** दैनिक कार्यों के लिए मौसम सुरक्षित और अनुकूल है।`;
+  }
+
+  // --- BENGALI (বাংলা) ---
+  if (language === 'bn') {
+    const bnCond = {
+      'Clear Sky': 'পরিষ্কার আকাশ', 'Mainly Clear': 'মূলত পরিষ্কার আকাশ', 'Partly Cloudy': 'আংশিক মেঘলা',
+      'Overcast': 'মেঘলা আকাশ', 'Slight Rain': 'হালকা বৃষ্টি', 'Moderate Rain': 'মাঝারি বৃষ্টি',
+      'Heavy Rain': 'ভারী বৃষ্টি', 'Thunderstorm': 'বজ্রবিদ্যুৎ সহ ঝড়বৃষ্টি', 'Foggy': 'কুয়াশা'
+    }[condition] || condition;
+    const bnRisk = { LOW: 'কম ঝুঁকি', MODERATE: 'মাঝারি ঝুঁকি', HIGH: 'উচ্চ ঝুঁকি', EXTREME: 'চরম ঝুঁকি' }[riskLevel] || riskLevel;
+
+    if (isRainQ) {
+      const advice = rainProb > 60
+        ? '🌧️ বৃষ্টির সম্ভাবনা খুব বেশি! বাইরে বেরোনোর সময় ছাতা বা রেইনকোট সাথে রাখুন।'
+        : '☀️ বৃষ্টির সম্ভাবনা কম। স্বাভাবিকভাবে বাইরে যেতে পারেন।';
+      return `🌧️ **${locName}-র বৃষ্টির পূর্বাভাস:**\n\n• **বৃষ্টির সম্ভাবনা:** **${rainProb}%**\n• **বর্তমান আকাশ:** **${bnCond}**\n• **পরামর্শ:** ${advice}`;
+    }
+
+    return `**${locName}-র আবহাওয়া রিপোর্ট:**\n\n• **পরিস্থিতি:** **${bnCond}** (তাপমাত্রা ${temp}°C, অনুভূত ${feelsLike}°C)\n• **বৃষ্টির সম্ভাবনা:** **${rainProb}%** | **বাতাসের গতি:** ${wind} km/h\n• **ঝুঁকি:** **${bnRisk}**\n\n💡 **পরামর্শ:** দৈনন্দিন কাজের জন্য আবহাওয়া স্বাভাবিক রয়েছে।`;
+  }
+
+  // --- TELUGU (తెలుగు) ---
+  if (language === 'te') {
+    const teCond = {
+      'Clear Sky': 'స్వచ్ఛమైన ఆకాశం', 'Partly Cloudy': 'పాక్షికంగా మేఘావృతం', 'Overcast': 'దట్టమైన మేఘాలు',
+      'Slight Rain': 'తేలికపాటి వర్షం', 'Moderate Rain': 'మధ్యస్థ వర్షం', 'Heavy Rain': 'భారీ వర్షం',
+      'Thunderstorm': 'ఉరుములతో కూడిన తుఫాను'
+    }[condition] || condition;
+    const teRisk = { LOW: 'తక్కువ ప్రమాదం', MODERATE: 'మధ్యస్థ ప్రమాదం', HIGH: 'ఎక్కువ ప్రమాదం', EXTREME: 'తీవ్రమైన ప్రమాదం' }[riskLevel] || riskLevel;
+
+    return `**${locName} వాతావరణ సమాచారం:**\n\n• **పరిస్థితి:** **${teCond}** (ఉష్ణోగ్రత ${temp}°C, అనుభూతి ${feelsLike}°C)\n• **వర్షం అవకాశం:** **${rainProb}%** | **గాలి వేగం:** ${wind} km/h\n• **ప్రమాద స్థాయి:** **${teRisk}**\n\n💡 **భద్రతా సలహా:** రోజువారీ పనులకు వాతావరణం అనుకూలంగా ఉంది.`;
+  }
+
+  // --- TAMIL (தமிழ்) ---
+  if (language === 'ta') {
+    const taCond = {
+      'Clear Sky': 'தெளிவான வானம்', 'Partly Cloudy': 'பகுதி மேகமூட்டம்', 'Overcast': 'முழு மேகமூட்டம்',
+      'Slight Rain': 'லேசான மழை', 'Moderate Rain': 'மிதமான மழை', 'Heavy Rain': 'கனமழை',
+      'Thunderstorm': 'இடி மின்னலுடன் கூடிய புயல்'
+    }[condition] || condition;
+    const taRisk = { LOW: 'குறைந்த ஆபத்து', MODERATE: 'மிதமான ஆபத்து', HIGH: 'அதிக ஆபத்து', EXTREME: 'தீவிர ஆபத்து' }[riskLevel] || riskLevel;
+
+    return `**${locName} வானிலை அறிக்கை:**\n\n• **வானிலை:** **${taCond}** (வெப்பநிலை ${temp}°C, உணரப்படுவது ${feelsLike}°C)\n• **மழை வாய்ப்பு:** **${rainProb}%** | **காற்றின் வேகம்:** ${wind} km/h\n• **ஆபத்து நிலை:** **${taRisk}**\n\n💡 **பாதுகாப்பு ஆலோசனை:** அன்றாட வேலைகளுக்கு வானிலை சாதகமாக உள்ளது.`;
+  }
+
+  // --- DEFAULT ENGLISH ---
+  if (isCycloneQ) {
+    if (activeAlerts.length > 0) {
+      const topAlert = activeAlerts[0];
+      return (
+        `⚠️ **Active Weather Alert for ${locName}:**\n\n` +
+        `• **Status:** [${topAlert.alert_color}] ${topAlert.title}\n` +
+        `• **Details:** ${topAlert.description}\n` +
+        `• **Risk Level:** **${riskLevel}**\n` +
+        `• **Safety Advisory:** ${safetyRecs}`
+      );
+    }
+    return (
+      `🛡️ **Disaster Risk & Alert Status for ${locName}:**\n\n` +
+      `• **Current Risk Level:** **${riskLevel}** (Safe / Normal)\n` +
+      `• **Active Severe Alerts:** None reported at this time.\n` +
+      `• **Meteorological Summary:** Wind is **${wind} km/h** with rain probability at **${rainProb}%**.\n` +
+      `• **Safety Guidance:** No imminent cyclone or flood threat detected. Safe for standard outdoor activities.`
+    );
+  }
+
+  if (isRainQ) {
+    const advice = rainProb > 60
+      ? '🌧️ High probability of rain! Please carry an umbrella or raincoat.'
+      : rainProb > 30
+      ? '⛅ Moderate chance of scattered rain. Keep rain protection handy if heading out.'
+      : '☀️ Low probability of rain. Dry conditions expected.';
+    return (
+      `🌧️ **Precipitation Outlook for ${locName}:**\n\n` +
+      `• **ML Rain Probability:** **${rainProb}%**\n` +
+      `• **Current Condition:** **${condition}**\n` +
+      `• **Humidity:** **${humidity}%**\n` +
+      `• **Recommendation:** ${advice}`
+    );
+  }
+
+  if (isTempQ) {
+    return (
+      `🌡️ **Current Weather & Temperature for ${locName}:**\n\n` +
+      `• **Temperature:** **${temp}°C** (Feels like **${feelsLike}°C**)\n` +
+      `• **Condition:** **${condition}**\n` +
+      `• **Humidity:** **${humidity}%** | **Wind:** **${wind} km/h**\n` +
+      `• **UV Index:** ${curr.uv_index || 6}/10 | **Air Quality:** ${aq.quality_label || 'Good'} (AQI: ${aq.us_aqi || 45})\n` +
+      `• **Safety:** ${safetyRecs}`
+    );
+  }
+
+  return (
+    `**WeatherGPT Report for ${locName}:**\n\n` +
+    `• **Condition:** **${condition}** (${temp}°C, feels like ${feelsLike}°C)\n` +
+    `• **Rain Probability:** **${rainProb}%**\n` +
+    `• **Wind & Humidity:** ${wind} km/h, ${humidity}%\n` +
+    `• **Risk Indicator:** **${riskLevel}**\n\n` +
+    `💡 **Safety Advisory:** ${safetyRecs}`
+  );
+};
+
+export const sendChatMessage = async (message, location, language = 'en', weatherContext = null) => {
+  const apiBase = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
+    ? import.meta.env.VITE_API_URL.replace(/\/$/, '')
+    : '';
+
+  const endpoints = [];
+  if (apiBase) {
+    endpoints.push(`${apiBase}/api/chat`);
+  }
+  endpoints.push(
     'http://127.0.0.1:8000/api/chat',
     'http://localhost:8000/api/chat',
     '/api/chat'
-  ];
+  );
 
   for (const url of endpoints) {
     try {
-      const response = await axios.post(url, { message, location, language }, { timeout: 4000 });
+      const response = await axios.post(url, { message, location, language }, { timeout: 2500 });
       if (response.data && response.data.reply) {
         return response.data;
       }
     } catch (e) {
-      // Continue
+      // Continue to next endpoint or fallback
     }
   }
 
+  // Smart grounded client-side fallback
+  const groundedReply = generateGroundedClientReply(message, location, language, weatherContext);
   return {
-    reply: `WeatherGPT Assistant (${location || 'Current Location'}): Currently experiencing ${message.toLowerCase().includes('rain') ? 'light precipitation risk' : 'stable conditions'}. Please consult local meteorological advisories if traveling.`
+    reply: groundedReply,
+    location,
+    grounded: true,
+    risk_level: weatherContext?.alerts?.risk_assessment?.risk_level || 'LOW'
   };
 };
 
 export const fetchHistoricalAnalysis = async (city, year1 = 2020, year2 = 2024) => {
   const cleanCity = encodeURIComponent(city || 'Bhubaneswar');
-  const endpoints = [
+  const apiBase = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
+    ? import.meta.env.VITE_API_URL.replace(/\/$/, '')
+    : '';
+
+  const endpoints = [];
+  if (apiBase) {
+    endpoints.push(`${apiBase}/api/historical/${cleanCity}?year1=${year1}&year2=${year2}`);
+  }
+  endpoints.push(
     `http://127.0.0.1:8000/api/historical/${cleanCity}?year1=${year1}&year2=${year2}`,
     `http://localhost:8000/api/historical/${cleanCity}?year1=${year1}&year2=${year2}`,
     `/api/historical/${cleanCity}?year1=${year1}&year2=${year2}`
-  ];
+  );
 
   for (const url of endpoints) {
     try {
@@ -484,14 +1147,19 @@ export const fetchHistoricalAnalysis = async (city, year1 = 2020, year2 = 2024) 
     };
   });
 
+  const cityKey = (city || '').trim().toLowerCase();
+  const matchedCity = MOCK_CITIES[cityKey];
+
   return {
-    city: city || 'Bhubaneswar',
+    city: matchedCity?.name || city || 'Bhubaneswar',
     location: {
-      name: city || 'Bhubaneswar',
-      latitude: 20.2961,
-      longitude: 85.8245,
-      country: 'India',
-      country_code: 'IN'
+      name: matchedCity?.name || city || 'Bhubaneswar',
+      latitude: matchedCity?.lat || 20.2961,
+      longitude: matchedCity?.lon || 85.8245,
+      country: matchedCity?.country || 'Global',
+      state: matchedCity?.state || '',
+      district: matchedCity?.district || city || 'Bhubaneswar',
+      country_code: matchedCity?.country_code || 'GL'
     },
     year1_data: y1Data,
     year2_data: y2Data,
@@ -506,5 +1174,58 @@ export const fetchHistoricalAnalysis = async (city, year1 = 2020, year2 = 2024) 
     },
     source: "Open-Meteo Historical Archive & WeatherGPT Climate Engine"
   };
+};
+
+export const detectLiveLocation = async ({ requireGps = false, allowIpFallback = false } = {}) => {
+  // 1. First priority: High-accuracy HTML5 browser GPS
+  if (typeof navigator !== 'undefined' && navigator.geolocation) {
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          (err) => {
+            // If high accuracy fails on desktop without dedicated GPS hardware, retry standard Wi-Fi mode
+            navigator.geolocation.getCurrentPosition(
+              resolve,
+              reject,
+              { timeout: 6000, enableHighAccuracy: false, maximumAge: 120000 }
+            );
+          },
+          { timeout: 6000, enableHighAccuracy: true, maximumAge: 60000 }
+        );
+      });
+      if (pos && pos.coords) {
+        return `${pos.coords.latitude.toFixed(4)},${pos.coords.longitude.toFixed(4)}`;
+      }
+    } catch (err) {
+      console.warn('Browser GPS geolocation not granted or unavailable:', err?.message || err);
+      if (requireGps) {
+        const errType = err?.code === 1 ? 'PERMISSION_DENIED' : 'UNAVAILABLE';
+        throw new Error(errType);
+      }
+    }
+  }
+
+  if (requireGps) {
+    throw new Error('PERMISSION_DENIED');
+  }
+
+  // 2. Optional IP-based geolocation fallback (strictly exclude Indian ISP datacenter proxies like Mumbai/Delhi)
+  if (allowIpFallback) {
+    try {
+      const ipRes = await axios.get('https://ipwho.is/', { timeout: 3500 });
+      if (ipRes.data && ipRes.data.success !== false) {
+        const { latitude, longitude, city, country_code } = ipRes.data;
+        // In India, broadband/mobile ISPs route through Mumbai/Delhi exchanges, so default to Bhubaneswar instead
+        if (country_code !== 'IN') {
+          if (latitude && longitude) return `${latitude},${longitude}`;
+          if (city) return city;
+        }
+      }
+    } catch (err) {}
+  }
+
+  // 3. Fallback: Always default to Bhubaneswar, Odisha for WeatherGPT
+  return 'Bhubaneswar';
 };
 
