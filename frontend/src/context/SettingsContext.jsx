@@ -8,7 +8,10 @@ const DEFAULT_SETTINGS = {
   tempUnit: 'C',        // 'C' | 'F'
   windUnit: 'km/h',     // 'km/h' | 'mph' | 'm/s' | 'knots'
   pressureUnit: 'hPa',  // 'hPa' | 'mbar' | 'inHg' | 'mmHg'
-  nightUpdate: false    // boolean
+  nightUpdate: false,   // boolean
+  alertEmail: '',       // email for risk alerts
+  autoEmailAlerts: true,// auto-send email on weather risk
+  alertMinRisk: 'HIGH'  // 'MODERATE' | 'HIGH' | 'EXTREME'
 };
 
 export function SettingsProvider({ children }) {

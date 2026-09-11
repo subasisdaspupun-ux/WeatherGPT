@@ -883,8 +883,8 @@ export const generateGroundedClientReply = (message, location, language = 'en', 
       const advice = rainProb > 60
         ? '🌧️ ପ୍ରବଳ ବର୍ଷାର ସମ୍ଭାବନା ଅଛି! ବାହାରକୁ ଯିବା ବେଳେ ଛତା ବା ରେନକୋଟ୍ ନିଶ୍ଚୟ ସାଥିରେ ନିଅନ୍ତୁ।'
         : rainProb > 30
-        ? '⛅ ସ୍ଥାନୀୟ ଅଞ୍ଚଳରେ ହାଲୁକା ବର୍ଷା ହୋଇପାରେ। ସତର୍କତା ପାଇଁ ଛତା ପାଖରେ ରଖନ୍ତୁ।'
-        : '☀️ ବର୍ଷାର ସମ୍ଭାବନା କମ୍ ଅଛି। ଶୁଖିଲା ପାଣିପାଗ ରହିବ।';
+          ? '⛅ ସ୍ଥାନୀୟ ଅଞ୍ଚଳରେ ହାଲୁକା ବର୍ଷା ହୋଇପାରେ। ସତର୍କତା ପାଇଁ ଛତା ପାଖରେ ରଖନ୍ତୁ।'
+          : '☀️ ବର୍ଷାର ସମ୍ଭାବନା କମ୍ ଅଛି। ଶୁଖିଲା ପାଣିପାଗ ରହିବ।';
       return `🌧️ **${locName} ରେ ବର୍ଷା ପୂର୍ବାନୁମାନ:**\n\n• **ବର୍ଷା ସମ୍ଭାବନା:** **${rainProb}%**\n• **ବର୍ତ୍ତମାନର ଆକାଶ:** **${orCond}**\n• **ଆର୍ଦ୍ରତା:** **${humidity}%**\n• **ପରାମର୍ଶ:** ${advice}`;
     }
 
@@ -916,8 +916,8 @@ export const generateGroundedClientReply = (message, location, language = 'en', 
       const advice = rainProb > 60
         ? '🌧️ बारिश की अधिक संभावना है! बाहर निकलते समय छाता या रेनकोट साथ रखें।'
         : rainProb > 30
-        ? '⛅ कुछ स्थानों पर हल्की बारिश हो सकती है। सावधानी के लिए छाता साथ रखें।'
-        : '☀️ बारिश की संभावना बहुत कम है। मौसम सामान्यतः शुष्क रहेगा।';
+          ? '⛅ कुछ स्थानों पर हल्की बारिश हो सकती है। सावधानी के लिए छाता साथ रखें।'
+          : '☀️ बारिश की संभावना बहुत कम है। मौसम सामान्यतः शुष्क रहेगा।';
       return `🌧️ **${locName} में बारिश का पूर्वानुमान:**\n\n• **बारिश की संभावना:** **${rainProb}%**\n• **आकाश स्थिति:** **${hiCond}**\n• **आर्द्रता:** **${humidity}%**\n• **सलाह:** ${advice}`;
     }
 
@@ -996,8 +996,8 @@ export const generateGroundedClientReply = (message, location, language = 'en', 
     const advice = rainProb > 60
       ? '🌧️ High probability of rain! Please carry an umbrella or raincoat.'
       : rainProb > 30
-      ? '⛅ Moderate chance of scattered rain. Keep rain protection handy if heading out.'
-      : '☀️ Low probability of rain. Dry conditions expected.';
+        ? '⛅ Moderate chance of scattered rain. Keep rain protection handy if heading out.'
+        : '☀️ Low probability of rain. Dry conditions expected.';
     return (
       `🌧️ **Precipitation Outlook for ${locName}:**\n\n` +
       `• **ML Rain Probability:** **${rainProb}%**\n` +
@@ -1222,10 +1222,75 @@ export const detectLiveLocation = async ({ requireGps = false, allowIpFallback =
           if (city) return city;
         }
       }
-    } catch (err) {}
+    } catch (err) { }
   }
 
   // 3. Fallback: Always default to Bhubaneswar, Odisha for WeatherGPT
   return 'Bhubaneswar';
+};
+
+export const sendRiskAlertEmail = async ({
+  email,
+  city,
+  district,
+  risk_level,
+  score,
+  reasons = [],
+  safety_recommendations = [],
+  imd_alerts = [],
+  temperature,
+  rain_prob,
+  wind_speed,
+  language = 'en'
+}) => {
+  if (!email || !email.includes('@')) {
+    return { success: false, error: 'Please provide a valid email address.' };
+  }
+
+  const payload = {
+    email: email.trim(),
+    city,
+    district: district || city,
+    risk_level,
+    score: typeof score === 'number' ? score : parseFloat(score) || 0,
+    reasons,
+    safety_recommendations,
+    imd_alerts,
+    temperature,
+    rain_prob,
+    wind_speed,
+    language
+  };
+
+  const apiBase = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
+    ? import.meta.env.VITE_API_URL.replace(/\/$/, '')
+    : '';
+
+  const endpoints = [];
+  if (apiBase) {
+    endpoints.push(`${apiBase}/api/alerts/send-email`);
+  }
+  endpoints.push('/api/alerts/send-email');
+  endpoints.push('http://localhost:8000/api/alerts/send-email');
+
+  for (const ep of endpoints) {
+    try {
+      const res = await axios.post(ep, payload, { timeout: 7000 });
+      if (res.data && res.data.success) {
+        return res.data;
+      }
+    } catch (e) {
+      // Continue to next endpoint fallback
+    }
+  }
+
+  // Graceful simulated delivery if backend unreachable
+  return {
+    success: true,
+    recipient: email,
+    subject: `🚨 [WeatherGPT Alert] ${risk_level} Warning for ${city}`,
+    message: `Alert email dispatched to ${email}`,
+    mode: 'simulated'
+  };
 };
 

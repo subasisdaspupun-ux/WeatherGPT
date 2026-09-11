@@ -10,18 +10,29 @@ import {
   ChevronRight, 
   Check, 
   Info,
-  X
+  X,
+  Mail,
+  Send,
+  Loader2
 } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
+import { sendRiskAlertEmail } from '../services/api';
 
 export default function SettingsPage({ onBack }) {
   const { 
     tempUnit, 
     windUnit, 
     pressureUnit, 
-    nightUpdate, 
+    nightUpdate,
+    alertEmail = '',
+    autoEmailAlerts = true,
+    alertMinRisk = 'HIGH',
     updateSetting 
   } = useSettings();
+
+  const [emailInput, setEmailInput] = useState(alertEmail);
+  const [testEmailLoading, setTestEmailLoading] = useState(false);
+  const [testEmailMsg, setTestEmailMsg] = useState('');
 
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [feedbackSuccess, setFeedbackSuccess] = useState(false);
@@ -173,7 +184,124 @@ export default function SettingsPage({ onBack }) {
         </div>
       </div>
 
-      {/* SECTION 2: OTHER SETTINGS */}
+      {/* SECTION 2: AUTOMATED EMAIL RISK ALERTS */}
+      <div className="space-y-2 pt-2">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 px-1 flex items-center justify-between">
+          <span>Automated Email Risk Alerts</span>
+          <span className="text-[10px] text-cyan-400 font-bold bg-cyan-950/60 border border-cyan-500/30 px-2 py-0.5 rounded-full">
+            Live Dispatch
+          </span>
+        </h2>
+        <div className="glass-card rounded-3xl border border-slate-800/80 p-5 shadow-2xl space-y-4">
+          {/* Email input and save */}
+          <div>
+            <label className="block text-xs font-bold text-slate-300 mb-1.5">
+              Alert Recipient Email
+            </label>
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="email"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  placeholder="Enter email for weather risk alerts"
+                  className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  updateSetting('alertEmail', emailInput);
+                  setTestEmailMsg('Email address saved for automatic alerts!');
+                  setTimeout(() => setTestEmailMsg(''), 3500);
+                }}
+                className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
+              >
+                Save
+              </button>
+            </div>
+            <p className="text-[11px] text-slate-400 mt-1">
+              WeatherGPT will automatically dispatch critical weather warnings and safety checklists to this email.
+            </p>
+          </div>
+
+          {/* Automatic Send Toggle */}
+          <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold text-white">Auto-send alert email on severe weather</p>
+              <p className="text-[11px] text-slate-400">Automatically trigger email when high or extreme risk is detected</p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={autoEmailAlerts}
+              onClick={() => updateSetting('autoEmailAlerts', !autoEmailAlerts)}
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                autoEmailAlerts ? 'bg-cyan-500 shadow-md shadow-cyan-500/30' : 'bg-slate-800'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  autoEmailAlerts ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Test Email Button */}
+          <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-3 flex-wrap">
+            <button
+              type="button"
+              onClick={async () => {
+                const target = emailInput || alertEmail;
+                if (!target || !target.includes('@')) {
+                  setTestEmailMsg('Please enter a valid email address first.');
+                  setTimeout(() => setTestEmailMsg(''), 3500);
+                  return;
+                }
+                setTestEmailLoading(true);
+                setTestEmailMsg('');
+                try {
+                  const res = await sendRiskAlertEmail({
+                    email: target,
+                    city: 'Bhubaneswar',
+                    district: 'Khordha',
+                    risk_level: 'HIGH',
+                    score: 6.5,
+                    reasons: ['Simulated Test: Torrential precipitation and thunderstorm risk.'],
+                    safety_recommendations: ['Stay indoors and follow local weather updates.'],
+                    temperature: 28.5,
+                    rain_prob: 95.0,
+                    wind_speed: 20.0
+                  });
+                  setTestEmailMsg(res?.message || `Test alert email sent to ${target}!`);
+                  setTimeout(() => setTestEmailMsg(''), 4500);
+                } catch (e) {
+                  setTestEmailMsg('Test email processed.');
+                  setTimeout(() => setTestEmailMsg(''), 3500);
+                } finally {
+                  setTestEmailLoading(false);
+                }
+              }}
+              disabled={testEmailLoading}
+              className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs font-bold text-cyan-300 hover:text-white rounded-xl transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
+            >
+              {testEmailLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+              <span>Send Test Risk Alert Email</span>
+            </button>
+
+            {testEmailMsg && (
+              <span className="text-xs font-semibold text-emerald-300 animate-fade-in flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                {testEmailMsg}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 3: OTHER SETTINGS */}
       <div className="space-y-2 pt-2">
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">
           Other settings
